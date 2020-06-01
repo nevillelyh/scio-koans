@@ -1,0 +1,24 @@
+language: scala
+matrix:
+  include:
+    - scala: 2.12.11
+      jdk: openjdk8
+
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - rm -f $HOME/.ivy2/.sbt.ivy.lock
+  - find $HOME/.sbt -name "*.lock" -delete
+  - find $HOME/.ivy2/cache -name "ivydata-*.properties" -delete
+
+cache:
+  directories:
+    - $HOME/.cache/coursier
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck test:compile
+
+notifications:
+  email:
+    - neville.lyh@gmail.com
