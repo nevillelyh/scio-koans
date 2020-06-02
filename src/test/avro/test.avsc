@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "Test",
+  "namespace": "scio.koans.avro",
+  "fields": [
+    {"name": "int1", "type": "int"},
+    {"name": "int2", "type": "int"},
+    {"name": "int3", "type": "int"},
+    {"name": "int4", "type": "int"},
+    {"name": "int5", "type": "int"},
+    {"name": "str1", "type": "string"},
+    {"name": "str2", "type": "string"},
+    {"name": "str3", "type": "string"},
+    {"name": "str4", "type": "string"},
+    {"name": "str5", "type": "string"}
+  ]
+}
