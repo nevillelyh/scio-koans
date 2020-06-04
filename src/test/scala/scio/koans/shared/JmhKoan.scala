@@ -112,6 +112,8 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
     }
     they should s"be $factor baseline" in {
       val s0 = results("baseline")._1
+
+      print(scala.Console.CYAN)
       println("%-10s: %16s".format("Label", "Result"))
       println("%-10s: %16.3f ns/op".format("baseline", s0))
 
@@ -120,6 +122,7 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
         println("%-10s: %16.3f ns/op".format(l, s1))
         cmp(s0, s1)
       }
+      print(scala.Console.RESET)
     }
   }
 }
