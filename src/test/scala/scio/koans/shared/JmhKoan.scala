@@ -88,8 +88,10 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
    */
   def verifyResults(): Unit =
     "Revisions" should "return the same result as baseline" in {
-      labels.foreach { l =>
-        results("baseline")._2 shouldBe results(l)._2
+      labels.foreach { label =>
+        withClue(s"Benchmark $label:") {
+          results("baseline")._2 shouldBe results(label)._2
+        }
       }
     }
 
@@ -117,10 +119,10 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
       println("%-10s: %16s".format("Label", "Result"))
       println("%-10s: %16.3f ns/op".format("baseline", s0))
 
-      labels.foreach { l =>
-        val s1 = results(l)._1
-        println("%-10s: %16.3f ns/op".format(l, s1))
-        cmp(s0, s1)
+      labels.foreach { label =>
+        val s1 = results(label)._1
+        println("%-10s: %16.3f ns/op".format(label, s1))
+        withClue(s"Benchmark $label:")(cmp(s0, s1))
       }
       print(scala.Console.RESET)
     }
