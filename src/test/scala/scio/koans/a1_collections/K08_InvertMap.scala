@@ -24,7 +24,7 @@ class K08_InvertMap extends JmhKoan {
       .mapValues(_.map(_._2).toSet)
 
   @Benchmark def v1: mutable.Map[Int, Set[String]] = {
-    val m = mutable.Map.empty[Int, Set[String]]
+    val m = mutable.Map.empty[Int, Set[String]].withDefaultValue(Set.empty)
     ???
     m
   }
