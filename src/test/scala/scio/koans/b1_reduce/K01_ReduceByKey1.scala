@@ -4,7 +4,7 @@ import com.spotify.scio.values.SCollection
 import scio.koans.shared._
 
 /**
- * Replace a `groupByKey` with `reduceByKey`.
+ * Replace `groupByKey` with `reduceByKey`.
  */
 class K01_ReduceByKey1 extends TransformKoan {
   ImNotDone
