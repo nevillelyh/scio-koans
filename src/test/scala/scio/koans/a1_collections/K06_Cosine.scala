@@ -22,8 +22,7 @@ class K06_Cosine extends JmhKoan {
     dotProd / (mag1 * mag2)
   }
 
-  @Benchmark def v1: Double =
-    ???
+  @Benchmark def v1: Double = ???
 
   verifyResults()
   verifySpeedup(Speedup.Times(100))

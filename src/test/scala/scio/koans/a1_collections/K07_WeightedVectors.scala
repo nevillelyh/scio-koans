@@ -25,9 +25,8 @@ class K07_WeightedVectors extends JmhKoan {
 
   @Benchmark def v1: mutable.WrappedArray[Double] = {
     val sum = Array.fill(100)(0.0)
-    vecs.foreach {
-      case (v, w) =>
-        ???
+    for ((v, w) <- vecs) {
+      ???
     }
     sum
   }

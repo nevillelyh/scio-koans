@@ -28,7 +28,7 @@ class K01_ReduceByKey1 extends TransformKoan {
    *
    * - https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html
    */
-  test("baseline") {
+  baseline {
     _.groupByKey.mapValues(_.sum)
   }
 

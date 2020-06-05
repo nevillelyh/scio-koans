@@ -35,14 +35,13 @@ class K04_MergeMaps2 extends JmhKoan {
     "g" -> (181 to 200).toSet
   )
 
-  @Benchmark def baseline: Map[String, Set[Int]] = {
+  @Benchmark def baseline: Map[String, Set[Int]] =
     (map1.keySet ++ map2.keySet ++ map3.keySet).map { k =>
       val v1 = map1.getOrElse(k, Set.empty)
       val v2 = map2.getOrElse(k, Set.empty)
       val v3 = map3.getOrElse(k, Set.empty)
       (k, v1 ++ v2 ++ v3)
     }.toMap
-  }
 
   // Hint: if `k` exists in both `map1` and `map2`, value in `map2` wins
   @Benchmark def v1: Map[String, Set[Int]] =
@@ -54,9 +53,8 @@ class K04_MergeMaps2 extends JmhKoan {
   @Benchmark def v2: mutable.Map[String, Set[Int]] = {
     val map = mutable.Map.empty[String, Set[Int]]
     Seq(map1, map2, map3).foreach { m =>
-      m.foreach {
-        case (k, v) =>
-          ???
+      for ((k, v) <- m) {
+        ???
       }
     }
     map
