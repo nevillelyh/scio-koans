@@ -11,7 +11,7 @@ class K06_Semigroup extends Koan {
   import K06_Semigroup._
 
   // `Semigroup[T]` argument is usually implicit.
-  // http://www.lyh.me/implicits.html
+  // https://www.lyh.me/implicits.html
   def testCombine[T](x: T, y: T, expected: T)(implicit sg: Semigroup[T]): Unit =
     sg.combine(x, y) shouldBe expected
 
@@ -19,6 +19,7 @@ class K06_Semigroup extends Koan {
     sg.combineAllOption(xs) shouldBe expected
 
   "Int semigroup" should "work" in {
+    // Tip: ⌘-⇧-P or Ctrl-Shift-P to show implicit arguments
     testCombine(1, 2, 3)
     testCombineAllOption((1 to 10), Some(55))
   }
@@ -63,7 +64,7 @@ class K06_Semigroup extends Koan {
 object K06_Semigroup {
   // A semigroup is an algebraic structure consisting of a set (`T`) together with an associative
   // binary operation (`combine`).
-  // http://www.lyh.me/slides/semigroups.html
+  // https://www.lyh.me/slides/semigroups.html
   trait Semigroup[T] {
     def combine(x: T, y: T): T
     def combineAllOption(xs: TraversableOnce[T]): Option[T] = xs.reduceOption(combine)

@@ -12,7 +12,7 @@ class K06_Cosine extends JmhKoan {
   val vec1: Array[Double] = (1 to 100).map(_.toDouble / 100).toArray
   val vec2: Array[Double] = (-100 to -1).map(_.toDouble / 100).toArray
 
-  // cos(v1, v2) = dot_product(v1, v2) / (magnitude(v1) * magnitude(v2))
+  // cosine(v1, v2) = dot_product(v1, v2) / (magnitude(v1) * magnitude(v2))
   // dot_product(v1, v2) = sum(v1[i] * v2[i] for i in [0, |v1|])
   // magnitude(v) = sqrt(sum(v[i]^2 for i in [0, |v|]))
   @Benchmark def baseline: Double = {

@@ -19,13 +19,13 @@ class K05_DotProduct extends JmhKoan {
 
   // How much faster is this version?
   @Benchmark def v2: Double = {
-    var sum = 0.0
+    var dp = 0.0
     var i = 0
     while (i < vec1.length) {
       ???
       i += 1
     }
-    sum
+    dp
   }
 
   verifyResults()

@@ -22,7 +22,7 @@ class K01_Converter1 extends JmhKoan {
    * - `.asInstanceOf[T]`, i.e. casting, has low runtime overhead
    *
    * - https://docs.scala-lang.org/tour/variances.html
-   * - http://www.lyh.me/how-many-copies.html
+   * - https://www.lyh.me/how-many-copies.html
    */
   @Benchmark def baseline: ju.List[CharSequence] = uuids.map(_.asInstanceOf[CharSequence]).asJava
 

@@ -30,6 +30,7 @@ class K00_Count extends TransformKoan {
 
   // FIXME: implement this to make the test pass
   test("v1") {
+    // Hint: `map` elements to `Long`
     _.map(_ => ?:[Long]).reduce(???)
   }
 

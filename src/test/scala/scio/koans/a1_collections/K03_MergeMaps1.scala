@@ -40,7 +40,7 @@ class K03_MergeMaps1 extends JmhKoan {
   // Hint: if `k` exists in both `m1 ++ m2`, value in `m2` wins
   // How much faster is this version?
   @Benchmark def v2: Map[String, Set[Int]] =
-    map1 ++ map2.map(kv => ???)
+    map1 ++ map2.map(???)
 
   verifyResults()
   verifySpeedup(Speedup.Times(2))

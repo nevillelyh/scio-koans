@@ -40,7 +40,8 @@ object K03_LatLon2 {
   case class LatLon(lat: Double, lon: Double)
 
   object LatLon {
+    // Instead of changing the definition of `LatLon`, define a custom coder
     // Hint: derive a `LatLon` coder from a type with deterministic encoding
-    implicit def latlonCoder: Coder[LatLon] = Coder.xmap(???)(???, ???)
+    implicit def latLonCoder: Coder[LatLon] = Coder.xmap(???)(???, ???)
   }
 }
