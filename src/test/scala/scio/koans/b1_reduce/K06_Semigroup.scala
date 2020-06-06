@@ -20,6 +20,7 @@ class K06_Semigroup extends Koan {
 
   "Int semigroup" should "work" in {
     // Tip: ⌘-⇧-P or Ctrl-Shift-P to show implicit arguments
+    /** [[K06_Semigroup.Semigroup.intSemigroup]] is applied implicitly. */
     testCombine(1, 2, 3)
     testCombineAllOption((1 to 10), Some(55))
   }
@@ -74,6 +75,8 @@ object K06_Semigroup {
     // Make a `Semigroup[T]` from type `T` and binary operation `f`
     def apply[T](f: (T, T) => T): Semigroup[T] = (x: T, y: T) => f(x, y)
 
+    // Companion object of `Semigroup[T]` is searched for implicit `Semigroup[Int]`
+    // https://docs.scala-lang.org/tutorials/FAQ/finding-implicits.html
     // Implicit so it can be applied automatically to `(implicit sg: Semigroup[Int])` arguments
     implicit val intSemigroup: Semigroup[Int] = Semigroup(_ + _)
   }

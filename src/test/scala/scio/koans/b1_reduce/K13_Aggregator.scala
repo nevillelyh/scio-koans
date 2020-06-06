@@ -15,6 +15,7 @@ class K13_Aggregator extends Koan {
 
   "Min aggregator" should "work" in {
     case class Min(v: Int)
+    // `B` in `Aggregator[A, B, C]` is `Min` and requires an implicit `Semigroup[Min]`
     implicit val minSg: Semigroup[Min] = (x, y) => Min(math.min(x.v, y.v))
     val aggregator = Aggregator[Int, Min, Int](Min)(_.v)
     testAggregator(Seq(1, 2, 3), 1)(aggregator)

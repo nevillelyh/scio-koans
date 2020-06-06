@@ -17,6 +17,7 @@ class K09_Monoid extends Koan {
     mon.combineAll(xs) shouldBe expected
 
   "Int monoid" should "work" in {
+    // `K09_Monoid.Monoid.intMonoid` is applied implicitly
     testCombine(1, 2, 3)
     testCombineAll((1 to 10), 55)
   }

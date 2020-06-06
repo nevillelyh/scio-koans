@@ -41,7 +41,9 @@ object K03_LatLon2 {
 
   object LatLon {
     // Instead of changing the definition of `LatLon`, define a custom coder
+    // Companion object of `LatLon` is searched for implicit `F[LatLon]`, i.e. `Coder[LatLon]`
+    // https://docs.scala-lang.org/tutorials/FAQ/finding-implicits.html
     // Hint: derive a `LatLon` coder from a type with deterministic encoding
-    implicit def latLonCoder: Coder[LatLon] = Coder.xmap(???)(???, ???)
+    implicit val latLonCoder: Coder[LatLon] = Coder.xmap(???)(???, ???)
   }
 }
