@@ -2,13 +2,27 @@ package scio.koans.shared
 
 import com.spotify.scio._
 import com.spotify.scio.testing._
+import org.apache.beam.sdk.options.{PipelineOptions, PipelineOptionsFactory}
 
 import scala.language.implicitConversions
 
 /**
  * Base Koan for Scio pipelines.
  */
-abstract class PipelineKoan extends Koan with PipelineSpec
+abstract class PipelineKoan extends Koan with PipelineSpec {
+
+  /**
+   * Run with `ScioContext` and a specific `targetParallelism`.
+   */
+  def runWithParallelism[T](n: Int)(fn: ScioContext => T): ScioExecutionContext = {
+    val options = PipelineOptionsFactory
+      .fromArgs(s"--targetParallelism=$n")
+      .as(classOf[PipelineOptions])
+    val sc = ScioContext(options)
+    fn(sc)
+    sc.run()
+  }
+}
 
 /**
  * Base Koan for Scio transforms.
