@@ -43,8 +43,8 @@ class K02_HyperLogLog extends TransformKoan {
     // `HyperLogLogAggregator` is of type `Aggregator[Array[Byte], HLL, HLL]`
     val hll: Aggregator[String, HLL, Long] = HyperLogLogAggregator
       .withError(0.02)
-      .composePrepare(???)
-      .andThenPresent(???)
+      .composePrepare((x: String) => ???)
+      .andThenPresent((x: HLL) => ???)
     _.aggregate(hll)
   }
 }
