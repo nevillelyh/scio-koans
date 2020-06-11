@@ -17,7 +17,7 @@ Run `~nextKoan` inside the console. This will watch your local files and run the
 
 Fix any issues in the Koan to make tests pass. Replace any missing implementations like `???` or `?[T]` (something of type `T`) with your solution.
 
-Once the test is green, and you are satisfied with the solution, remove the first line in the Koan, `ImNotDone`, to move on to the next one.
+Once the test is green, and you are satisfied with the solution, remove the first line in the Koan, `ImNotDone`, to move on to the next one. You can also remove `ImNotDone` to skip a Koan.
 
 
 Here are all the tasks available.
