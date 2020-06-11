@@ -59,9 +59,10 @@ val commonSettings = Seq(
     if (completed.nonEmpty) {
       val logger = ConsoleLogger()
       logger.error("Not all tests are pending, did you forget `ImNotDone`?")
+      println(completed)
       completed.foreach(kv => logger.error(s"  ${kv._1}"))
+      throw new AlreadyHandledException(new RuntimeException)
     }
-    throw new AlreadyHandledException(new RuntimeException)
   }
 )
 
