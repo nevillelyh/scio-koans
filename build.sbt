@@ -32,8 +32,6 @@ val commonSettings = Seq(
     showAllKoans(allKoans)
   },
   nextKoan := {
-    (Jmh / compile).value
-
     val classLoader = (Test / testLoader).value
     val tests = (Test / definedTests).value
     val allKoans = getAllKoans(classLoader, tests)
