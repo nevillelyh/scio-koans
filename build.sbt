@@ -40,13 +40,15 @@ val commonSettings = Seq(
     showAllKoans(allKoans)
 
     // Find first test with `done == false`
-    allKoans.find(!_._2).map(_._1) match {
-      case None => ConsoleLogger().info("All koans completed")
-      case Some(name) =>
+    allKoans.indexWhere(!_._2) match {
+      case -1 => ConsoleLogger().info("All koans completed")
+      case n =>
+        val name = allKoans(n)._1
+        val logger = ConsoleLogger()
+        logger.info(Def.withColor(s"Running Koan ${n + 1} of ${allKoans.size}: $name", Cyan))
         val s = state.value
         Project.extract(s).runInputTask(Test / testOnly, " " + name, s)
         // If the test passes
-        val logger = ConsoleLogger()
         logger.info(Def.withColor("Koan completed", Green))
         logger.info(Def.withColor("Remove `ImNotDone` to move on to the next one", Green))
     }
