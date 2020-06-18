@@ -112,7 +112,9 @@ def getAllKoans(classLoader: ClassLoader, tests: Seq[TestDefinition]): Seq[(Stri
 
 def showAllKoans(koans: Seq[(String, Boolean)]): Unit = {
   val logger = ConsoleLogger()
-  logger.info(Def.withColor("Available Koans:", Green))
+  val completed = koans.count(_._2)
+  val total = koans.size
+  logger.info(Def.withColor(s"Available Koans: $completed/$total completed", Green))
   koans.foreach { kv =>
     val (color, status) = if (kv._2) (Green, "completed") else (Red, "pending")
     val msg = s"- %-40s\t: %s".format(kv._1, status)
