@@ -5,7 +5,7 @@ val scioVersion = "0.9.0"
 val magnolifyVersion = "0.2.0"
 val scalaTestVersion = "3.1.2"
 
-val allKoans = taskKey[Unit]("Show all Koans")
+val allKoans = taskKey[Seq[(String, Boolean)]]("Show all Koans")
 val nextKoan = taskKey[Unit]("Run next Koan")
 val verifyKoans = taskKey[Unit]("Verify all Koans")
 
@@ -28,22 +28,20 @@ val commonSettings = Seq(
   allKoans := {
     val classLoader = (Test / testLoader).value
     val tests = (Test / definedTests).value
-    val allKoans = getAllKoans(classLoader, tests)
-    showAllKoans(allKoans)
+    val ks = getAllKoans(classLoader, tests)
+    showAllKoans(ks)
+    ks
   },
+  allKoans := allKoans.dependsOn(Test / testLoader, Test / definedTests).value,
   nextKoan := {
-    val classLoader = (Test / testLoader).value
-    val tests = (Test / definedTests).value
-    val allKoans = getAllKoans(classLoader, tests)
-    showAllKoans(allKoans)
-
+    val ks = allKoans.value
     // Find first test with `done == false`
-    allKoans.indexWhere(!_._2) match {
+    ks.indexWhere(!_._2) match {
       case -1 => ConsoleLogger().info("All koans completed")
       case n =>
-        val name = allKoans(n)._1
+        val name = ks(n)._1
         val logger = ConsoleLogger()
-        logger.info(Def.withColor(s"Running Koan ${n + 1} of ${allKoans.size}: $name", Cyan))
+        logger.info(Def.withColor(s"Running Koan ${n + 1} of ${ks.size}: $name", Cyan))
         val s = state.value
         Project.extract(s).runInputTask(Test / testOnly, " " + name, s)
         // If the test passes
@@ -52,11 +50,10 @@ val commonSettings = Seq(
     }
     Unit
   },
+  nextKoan := nextKoan.dependsOn(allKoans, state).value,
   verifyKoans := {
-    val classLoader = (Test / testLoader).value
-    val tests = (Test / definedTests).value
-    val allKoans = getAllKoans(classLoader, tests)
-    val completed = allKoans.filter(_._2)
+    val ks = allKoans.value
+    val completed = ks.filter(_._2)
     if (completed.nonEmpty) {
       val logger = ConsoleLogger()
       logger.error("Not all tests are pending, did you forget `ImNotDone`?")
@@ -64,7 +61,8 @@ val commonSettings = Seq(
       completed.foreach(kv => logger.error(s"  ${kv._1}"))
       throw new AlreadyHandledException(new RuntimeException)
     }
-  }
+  },
+  verifyKoans := verifyKoans.dependsOn(allKoans).value,
 )
 
 val jmhSettings = Seq(
