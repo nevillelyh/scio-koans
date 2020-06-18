@@ -68,9 +68,9 @@ val commonSettings = Seq(
 )
 
 val jmhSettings = Seq(
-  Jmh / sourceDirectory := (sourceDirectory in Test).value,
-  Jmh / classDirectory := (classDirectory in Test).value,
-  Jmh / dependencyClasspath := (dependencyClasspath in Test).value,
+  Jmh / sourceDirectory := (Test / sourceDirectory).value,
+  Jmh / classDirectory := (Test / classDirectory).value,
+  Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
   // rewire tasks, so that 'test' automatically invokes 'jmh:compile'
   // (otherwise a clean 'test' would fail)
   Jmh / compile := (Jmh / compile).dependsOn(Test / compile).value,
