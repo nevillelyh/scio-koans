@@ -9,6 +9,7 @@ val allKoans = taskKey[Unit]("Show all Koans")
 val nextKoan = taskKey[Unit]("Run next Koan")
 val verifyKoans = taskKey[Unit]("Verify all Koans")
 
+val Cyan = Some(scala.Console.CYAN)
 val Green = Some(scala.Console.GREEN)
 val Red = Some(scala.Console.RED)
 
@@ -114,7 +115,7 @@ def showAllKoans(koans: Seq[(String, Boolean)]): Unit = {
   val logger = ConsoleLogger()
   val completed = koans.count(_._2)
   val total = koans.size
-  logger.info(Def.withColor(s"Available Koans: $completed/$total completed", Green))
+  logger.info(Def.withColor(s"Available Koans: $completed of $total completed", Cyan))
   koans.foreach { kv =>
     val (color, status) = if (kv._2) (Green, "completed") else (Red, "pending")
     val msg = s"- %-40s\t: %s".format(kv._1, status)
