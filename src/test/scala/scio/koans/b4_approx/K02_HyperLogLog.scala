@@ -39,12 +39,18 @@ class K02_HyperLogLog extends TransformKoan {
     _.countApproxDistinct(maximumEstimationError = 0.02)
   }
 
-  test("v2") {
+  test("v2") { input =>
     // `HyperLogLogAggregator` is of type `Aggregator[Array[Byte], HLL, HLL]`
     val hll: Aggregator[String, HLL, Long] = HyperLogLogAggregator
       .withError(0.02)
       .composePrepare((x: String) => ???)
       .andThenPresent((x: HLL) => ???)
-    _.aggregate(hll)
+    input.aggregate(hll)
+  }
+
+  test("v3") {
+    // `approximateUniqueCount` uses an exact set for up to 100 items
+    // then HyperLogLog (HLL) with 13 bits, 8192 bytes, and 1.2% error
+    _.aggregate(Aggregator.approximateUniqueCount)
   }
 }
