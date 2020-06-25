@@ -16,9 +16,4 @@ trait Koan extends AnyFlatSpec with Matchers {
    * with the solution.
    */
   def ImNotDone: Unit = done = false
-
-  /**
-   * Placeholder for a missing value of type `T`.
-   */
-  def ?:[T]: T = throw new NotImplementedError
 }
