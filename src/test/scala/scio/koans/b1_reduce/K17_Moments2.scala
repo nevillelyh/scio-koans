@@ -74,10 +74,10 @@ class K17_Moments2 extends TransformKoan {
   }
 
   test("v2") { input =>
-    val min = MinAggregator[Int]()
-    val max = MaxAggregator[Int]()
+    val min = Aggregator.min[Int]
+    val max = Aggregator.max[Int]
     val sum = Aggregator.fromMonoid[Int]
-    val moments: Aggregator[Double, Moments, Moments] = ???
+    val moments: Aggregator[Int, Moments, Moments] = ???
 
     // Compose from multiple aggregators
     val multiAggregator: Aggregator[Int, _, Stats] = ???

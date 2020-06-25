@@ -46,7 +46,7 @@ class K14_AggregateByKey1 extends TransformKoan {
 
   test("v1") { input =>
     // `MinAggregator` from Algebird
-    val min: SCollection[(String, Int)] = input.aggregateByKey(MinAggregator())
+    val min: SCollection[(String, Int)] = input.aggregateByKey(Aggregator.min)
 
     // FIXME: implement these with `aggregateByKey`
     // Hint: Algebird also provides `MaxAggregator`.
