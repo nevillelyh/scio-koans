@@ -25,7 +25,7 @@ class K13_Aggregator extends Koan {
     case class Max(v: Int)
     implicit val maxSg: Semigroup[Max] = (x, y) => Max(math.max(x.v, y.v))
     val aggregator = ???
-    testAggregator(Seq(1, 2, 3), 1)(aggregator)
+    testAggregator(Seq(1, 2, 3), 3)(aggregator)
   }
 
   "Distinct count aggregator" should "work" in {
