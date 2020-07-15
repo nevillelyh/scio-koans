@@ -39,14 +39,30 @@ class K15_AggregateByKey2 extends TransformKoan {
       .mapValues(v => Stats(v._1, v._2, v._3.get, v._4.get, v._5.size))
   }
 
-  test("v1") { input =>
-    // Individual aggregators
-    val countA = Aggregator.size
-    val sumA = Aggregator.fromMonoid[Int]
-    val minA: Aggregator[Int, _, Int] = ???
-    val maxA: Aggregator[Int, _, Int] = ???
-    val distinctCountA: Aggregator[Int, _, Int] = ???
+  // Individual aggregators
+  val countA = Aggregator.size
+  val sumA = Aggregator.fromMonoid[Int]
+  val minA: Aggregator[Int, _, Int] = ???
+  val maxA: Aggregator[Int, _, Int] = ???
+  val distinctCountA: Aggregator[Int, _, Int] = ???
 
+  test("v1") { input =>
+    // Joining aggregators
+    val multiAggregator: Aggregator[Int, _, Stats] =
+      countA
+        .join(sumA)
+        .join(minA)
+        .join(maxA)
+        .join(distinctCountA)
+        .andThenPresent {
+          case ((((count, sum), min), max), distinctCount) =>
+            // FIXME: present results as `Stats`
+            ???
+        }
+    input.aggregateByKey(multiAggregator)
+  }
+
+  test("v2") { input =>
     // Compose from multiple aggregators
     val multiAggregator: Aggregator[Int, _, Stats] =
       MultiAggregator(countA, sumA, minA, maxA, distinctCountA)
