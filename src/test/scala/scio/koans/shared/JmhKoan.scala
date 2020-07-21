@@ -13,10 +13,9 @@ import scala.collection.JavaConverters._
 
 /**
  * Base Koan for JMH micro-benchmarks.
- * @param measurementTimeSec time to run each benchmark.
  */
 @State(Scope.Thread)
-abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
+abstract class JmhKoan extends Koan {
   // Map of benchmark labels to (ns/op, result)
   protected lazy val results: Map[String, (Double, Any)] =
     try {
@@ -29,7 +28,7 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
         .forks(0)
         .warmupIterations(0)
         .measurementIterations(1)
-        .measurementTime(TimeValue.seconds(measurementTimeSec))
+        .measurementTime(TimeValue.seconds(1))
         .timeUnit(TimeUnit.NANOSECONDS)
         .shouldFailOnError(true)
         .build()
@@ -112,6 +111,7 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
           (s0: Double, s1: Double) => math.abs((s0 - s1) / s0 * 100) should be <= x.toDouble
         )
     }
+
     they should s"be $factor baseline" in {
       val s0 = results("baseline")._1
 
@@ -119,10 +119,17 @@ abstract class JmhKoan(measurementTimeSec: Int = 1) extends Koan {
       println("%-10s: %16s".format("Label", "Result"))
       println("%-10s: %16.3f ns/op".format("baseline", s0))
 
+      val inCI = sys.env.get("CI").contains("true")
       labels.foreach { label =>
         val s1 = results(label)._1
         println("%-10s: %16.3f ns/op".format(label, s1))
-        withClue(s"Benchmark $label:")(cmp(s0, s1))
+        if (!inCI) {
+          withClue(s"Benchmark $label:")(cmp(s0, s1))
+        }
+      }
+      if (inCI) {
+        print(scala.Console.YELLOW)
+        println("Speedups ignored in CI")
       }
       print(scala.Console.RESET)
     }
