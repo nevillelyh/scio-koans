@@ -45,12 +45,12 @@ class K03_CountMinSketch extends TransformKoan {
 
 object K03_CountMinSketch {
   val input: Seq[String] = Seq(
-    Seq.fill(400)("a"),
-    Seq.fill(300)("b"),
-    Seq.fill(150)("c"),
-    Seq.fill(100)("d"),
-    Seq.fill(50)("e")
+    Seq.fill(100)("a"),
+    Seq.fill(80)("b"),
+    Seq.fill(50)("c"),
+    Seq.fill(20)("d"),
+    Seq.fill(10)("e")
   ).flatten
 
-  val output: Seq[(String, Long)] = Seq(("a", 400), ("c", 150), ("e", 50))
+  val output: Seq[(String, Long)] = Seq(("a", 100), ("c", 50), ("e", 10))
 }
