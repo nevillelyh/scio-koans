@@ -50,11 +50,11 @@ class K06_Semigroup extends Koan {
         } else {
           // `xs.reduceOption(combine)` makes many temporary `Set[Int]`s
           // Use a mutable builder to reduce overhead
-          val s = Set.newBuilder[Int]
+          val b = Set.newBuilder[Int]
           xs.foreach { x =>
             ???
           }
-          Some(s.result())
+          Some(b.result())
         }
     }
     testCombine(Set(1), Set(2), Set(1, 2))
