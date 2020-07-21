@@ -1,0 +1,1849 @@
+diff --git a/src/test/scala/scio/koans/a1_collections/K00_Jmh.scala b/src/test/scala/scio/koans/a1_collections/K00_Jmh.scala
+index 6fa1a25..35e40d1 100644
+--- a/src/test/scala/scio/koans/a1_collections/K00_Jmh.scala
++++ b/src/test/scala/scio/koans/a1_collections/K00_Jmh.scala
+@@ -9,14 +9,12 @@ import org.openjdk.jmh.annotations._
+  * https://github.com/ktoso/sbt-jmh
+  */
+ class K00_Jmh extends JmhKoan {
+-  ImNotDone // FIXME: delete this to move on to the next one
+-
+   @Benchmark def baseline: Int = {
+     Thread.sleep(10)
+     (1 to 100).sum
+   }
+ 
+-  @Benchmark def v1: Int = ??? // FIXME: implement this to speed up the benchmark
++  @Benchmark def v1: Int = (1 to 100).sum // FIXME: implement this to speed up the benchmark
+ 
+   // Add as many alternatives as you like
+   // @Benchmark def v2: Int = ???
+diff --git a/src/test/scala/scio/koans/a1_collections/K01_Converter1.scala b/src/test/scala/scio/koans/a1_collections/K01_Converter1.scala
+index 5a24cb6..b0ee0b8 100644
+--- a/src/test/scala/scio/koans/a1_collections/K01_Converter1.scala
++++ b/src/test/scala/scio/koans/a1_collections/K01_Converter1.scala
+@@ -10,8 +10,6 @@ import scala.collection.JavaConverters._
+  * Convert a Scala `List[String]` to a Java `List[CharSequence]`.
+  */
+ class K01_Converter1 extends JmhKoan {
+-  ImNotDone
+-
+   private val uuids: List[String] = List.fill(1000)(ju.UUID.randomUUID().toString)
+ 
+   /**
+@@ -27,7 +25,7 @@ class K01_Converter1 extends JmhKoan {
+   @Benchmark def baseline: ju.List[CharSequence] = uuids.map(_.asInstanceOf[CharSequence]).asJava
+ 
+   // Hint: casting can be parameterized, i.e. `.asInstanceOf[M[T]]`
+-  @Benchmark def v1: ju.List[CharSequence] = ???
++  @Benchmark def v1: ju.List[CharSequence] = uuids.asJava.asInstanceOf[ju.List[CharSequence]]
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Times(500))
+diff --git a/src/test/scala/scio/koans/a1_collections/K02_Converter2.scala b/src/test/scala/scio/koans/a1_collections/K02_Converter2.scala
+index 3892bed..5174363 100644
+--- a/src/test/scala/scio/koans/a1_collections/K02_Converter2.scala
++++ b/src/test/scala/scio/koans/a1_collections/K02_Converter2.scala
+@@ -10,8 +10,6 @@ import scala.collection.JavaConverters._
+  * Convert a Java `List[CharSequence]` to a Scala `List[String]`.
+  */
+ class K02_Converter2 extends JmhKoan {
+-  ImNotDone
+-
+   private val uuids: ju.List[CharSequence] = {
+     val l = new ju.ArrayList[CharSequence]()
+     (1 to 1000).foreach(_ => l.add(ju.UUID.randomUUID().toString))
+@@ -26,10 +24,10 @@ class K02_Converter2 extends JmhKoan {
+   @Benchmark def baseline: List[String] = uuids.asScala.map(_.toString).toList
+ 
+   // Hint: reduce eager copies by removing one conversion
+-  @Benchmark def v1: Seq[String] = ???
++  @Benchmark def v1: Seq[String] = uuids.asScala.map(_.toString)
+ 
+   // Hint: reduce eager copies by using `.iterator`
+-  @Benchmark def v2: List[String] = ???
++  @Benchmark def v2: List[String] = uuids.asScala.iterator.map(_.toString).toList
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Faster)
+diff --git a/src/test/scala/scio/koans/a1_collections/K03_MergeMaps1.scala b/src/test/scala/scio/koans/a1_collections/K03_MergeMaps1.scala
+index ce24aa9..8de8d82 100644
+--- a/src/test/scala/scio/koans/a1_collections/K03_MergeMaps1.scala
++++ b/src/test/scala/scio/koans/a1_collections/K03_MergeMaps1.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Merge 2 `Map[String, Set[Int]]`s.
+  */
+ class K03_MergeMaps1 extends JmhKoan {
+-  ImNotDone
+-
+   val map1: Map[String, Set[Int]] = Map(
+     "a" -> (1 to 20).toSet,
+     "b" -> (1 to 40).toSet,
+@@ -40,7 +38,7 @@ class K03_MergeMaps1 extends JmhKoan {
+   // Hint: if `k` exists in both `m1 ++ m2`, value in `m2` wins
+   // How much faster is this version?
+   @Benchmark def v2: Map[String, Set[Int]] =
+-    map1 ++ map2.map(???)
++    map1 ++ map2.map(kv => kv._1 -> (kv._2 ++ map1.getOrElse(kv._1, Set.empty)))
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Times(2))
+diff --git a/src/test/scala/scio/koans/a1_collections/K04_MergeMaps2.scala b/src/test/scala/scio/koans/a1_collections/K04_MergeMaps2.scala
+index 2c8701f..b5a4d97 100644
+--- a/src/test/scala/scio/koans/a1_collections/K04_MergeMaps2.scala
++++ b/src/test/scala/scio/koans/a1_collections/K04_MergeMaps2.scala
+@@ -9,8 +9,6 @@ import scala.collection.mutable
+  * Merge multiple `Map[String, Set[Int]]`s.
+  */
+ class K04_MergeMaps2 extends JmhKoan {
+-  ImNotDone
+-
+   val map1: Map[String, Set[Int]] = Map(
+     "a" -> (1 to 20).toSet,
+     "b" -> (1 to 40).toSet,
+@@ -46,7 +44,7 @@ class K04_MergeMaps2 extends JmhKoan {
+   // Hint: if `k` exists in both `map1` and `map2`, value in `map2` wins
+   @Benchmark def v1: Map[String, Set[Int]] =
+     Seq(map1, map2, map3).reduce { (m1, m2) =>
+-      m1 ++ ???
++      m1 ++ m2.map { case (k, v) => k -> (v ++ m1.getOrElse(k, Set.empty)) }
+     }
+ 
+   // How much faster is this version?
+@@ -54,7 +52,7 @@ class K04_MergeMaps2 extends JmhKoan {
+     val map = mutable.Map.empty[String, Set[Int]]
+     Seq(map1, map2, map3).foreach { m =>
+       for ((k, v) <- m) {
+-        ???
++        map(k) = v ++ map.getOrElse(k, Set.empty)
+       }
+     }
+     map
+diff --git a/src/test/scala/scio/koans/a1_collections/K05_DotProduct.scala b/src/test/scala/scio/koans/a1_collections/K05_DotProduct.scala
+index a2800c0..dd210a2 100644
+--- a/src/test/scala/scio/koans/a1_collections/K05_DotProduct.scala
++++ b/src/test/scala/scio/koans/a1_collections/K05_DotProduct.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Compute the dot product of 2 vectors.
+  */
+ class K05_DotProduct extends JmhKoan {
+-  ImNotDone
+-
+   val vec1: Array[Double] = (1 to 100).map(_.toDouble / 100).toArray
+   val vec2: Array[Double] = (-100 to -1).map(_.toDouble / 100).toArray
+ 
+@@ -22,7 +20,7 @@ class K05_DotProduct extends JmhKoan {
+     var dp = 0.0
+     var i = 0
+     while (i < vec1.length) {
+-      ???
++      dp += vec1(i) * vec2(i)
+       i += 1
+     }
+     dp
+diff --git a/src/test/scala/scio/koans/a1_collections/K06_Cosine.scala b/src/test/scala/scio/koans/a1_collections/K06_Cosine.scala
+index 1caf764..a22d1a7 100644
+--- a/src/test/scala/scio/koans/a1_collections/K06_Cosine.scala
++++ b/src/test/scala/scio/koans/a1_collections/K06_Cosine.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Compute the cosine similarity between 2 vectors.
+  */
+ class K06_Cosine extends JmhKoan {
+-  ImNotDone
+-
+   val vec1: Array[Double] = (1 to 100).map(_.toDouble / 100).toArray
+   val vec2: Array[Double] = (-100 to -1).map(_.toDouble / 100).toArray
+ 
+@@ -22,7 +20,19 @@ class K06_Cosine extends JmhKoan {
+     dotProd / (mag1 * mag2)
+   }
+ 
+-  @Benchmark def v1: Double = ???
++  @Benchmark def v1: Double = {
++    var dp = 0.0
++    var mag1 = 0.0
++    var mag2 = 0.0
++    var i = 0
++    while (i < vec1.length) {
++      dp += vec1(i) * vec2(i)
++      mag1 += vec1(i) * vec1(i)
++      mag2 += vec2(i) * vec2(i)
++      i += 1
++    }
++    dp / (math.sqrt(mag1) * math.sqrt(mag2))
++  }
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Times(100))
+diff --git a/src/test/scala/scio/koans/a1_collections/K07_WeightedVectors.scala b/src/test/scala/scio/koans/a1_collections/K07_WeightedVectors.scala
+index a283915..eaff29a 100644
+--- a/src/test/scala/scio/koans/a1_collections/K07_WeightedVectors.scala
++++ b/src/test/scala/scio/koans/a1_collections/K07_WeightedVectors.scala
+@@ -9,8 +9,6 @@ import scala.collection.mutable
+  * Element-wise sum of a collection vectors, each scaled with a weight.
+  */
+ class K07_WeightedVectors extends JmhKoan {
+-  ImNotDone
+-
+   // 20 vectors of dimension 100.
+   val vecs: Seq[(Array[Double], Double)] = (1 to 20).map { x =>
+     val vec = (x until x + 100).map(_.toDouble / 200).toArray
+@@ -26,7 +24,11 @@ class K07_WeightedVectors extends JmhKoan {
+   @Benchmark def v1: mutable.WrappedArray[Double] = {
+     val sum = Array.fill(100)(0.0)
+     for ((v, w) <- vecs) {
+-      ???
++      var i = 0
++      while (i < v.length) {
++        sum(i) += v(i) * w
++        i += 1
++      }
+     }
+     sum
+   }
+diff --git a/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala b/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
+index ac195ab..b27b368 100644
+--- a/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
++++ b/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
+@@ -9,8 +9,6 @@ import scala.collection.mutable
+  * Invert a `Map[String, Set[Int]]` to `Map[Int, Set[String]]`
+  */
+ class K08_InvertMap extends JmhKoan {
+-  ImNotDone
+-
+   val map: Map[String, Set[Int]] =
+     Map("a" -> Set(1, 2, 3), "b" -> Set(2, 3, 4), "c" -> Set(4, 5, 6))
+ 
+@@ -25,7 +23,11 @@ class K08_InvertMap extends JmhKoan {
+ 
+   @Benchmark def v1: mutable.Map[Int, Set[String]] = {
+     val m = mutable.Map.empty[Int, Set[String]].withDefaultValue(Set.empty)
+-    ???
++    for ((k, vs) <- map) {
++      for (v <- vs) {
++        m(v) += k
++      }
++    }
+     m
+   }
+ 
+diff --git a/src/test/scala/scio/koans/a1_collections/K09_ForYield.scala b/src/test/scala/scio/koans/a1_collections/K09_ForYield.scala
+index c16ea35..f7881f6 100644
+--- a/src/test/scala/scio/koans/a1_collections/K09_ForYield.scala
++++ b/src/test/scala/scio/koans/a1_collections/K09_ForYield.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Cartesian product of two lists.
+  */
+ class K09_ForYield extends JmhKoan {
+-  ImNotDone
+-
+   val lhs: List[String] = (1 to 10000).map("lhs-" + _).toList
+   val rhs: List[String] = (1 to 5).map("rhs-" + _).toList
+ 
+@@ -27,7 +25,8 @@ class K09_ForYield extends JmhKoan {
+    * - reduce the number of `++` concatenations
+    * - output order does not matter as long as it produces the same set of tuples
+    */
+-  @Benchmark def v1: Set[(String, String)] = ???
++  @Benchmark def v1: Set[(String, String)] =
++    (for { r <- rhs; l <- lhs } yield (l, r)).toSet
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Faster)
+diff --git a/src/test/scala/scio/koans/a2_coders/K00_Avro.scala b/src/test/scala/scio/koans/a2_coders/K00_Avro.scala
+index 11b112c..19ce58a 100644
+--- a/src/test/scala/scio/koans/a2_coders/K00_Avro.scala
++++ b/src/test/scala/scio/koans/a2_coders/K00_Avro.scala
+@@ -14,8 +14,6 @@ import scala.collection.mutable
+  * Encode Avro specific and generic records.
+  */
+ class K00_Avro extends JmhKoan {
+-  ImNotDone
+-
+   val specificRecord: Test = Test
+     .newBuilder()
+     .setInt1(1)
+@@ -57,7 +55,7 @@ class K00_Avro extends JmhKoan {
+ 
+   // FIXME: implement this efficiently
+   // Hint: look at the compiler warning
+-  val scioGeneric: Coder[GenericRecord] = Coder[GenericRecord]
++  val scioGeneric: Coder[GenericRecord] = Coder.avroGenericRecordCoder(Test.getClassSchema)
+   val beamGeneric: beam.Coder[GenericRecord] = CoderMaterializer.beamWithDefault(scioGeneric)
+ 
+   @Benchmark def generic: mutable.WrappedArray[Byte] =
+diff --git a/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala b/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
+index 4dfd984..71afd99 100644
+--- a/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
++++ b/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
+@@ -9,8 +9,6 @@ import scio.koans.shared._
+  * Fix the `NullPointerException`.
+  */
+ class K01_LocalDate extends PipelineKoan {
+-  ImNotDone
+-
+   val events: Seq[(String, String)] = Seq(
+     ("2020-01-01", "a"),
+     ("2020-01-02", "a"),
+@@ -21,11 +19,11 @@ class K01_LocalDate extends PipelineKoan {
+     ("BAD DATE", "x")
+   )
+ 
+-  val expected: Seq[((Int, Int), Set[String])] = Seq(
+-    ((2020, 1), Set("a")),
+-    ((2020, 2), Set("b", "c")),
+-    ((2020, 3), Set("c", "d")),
+-    (null, Set("x"))
++  val expected: Seq[(Option[(Int, Int)], Set[String])] = Seq(
++    (Some(2020, 1), Set("a")),
++    (Some(2020, 2), Set("b", "c")),
++    (Some(2020, 3), Set("c", "d")),
++    (None, Set("x"))
+   )
+ 
+   "Snippet" should "work" in {
+@@ -39,9 +37,9 @@ class K01_LocalDate extends PipelineKoan {
+             // Hint: avoid null by emitting something else in case of exception
+             try {
+               val date = LocalDate.from(formatter.parse(dateStr))
+-              ((date.getYear, date.getMonth.getValue), event)
++              (Some(date.getYear, date.getMonth.getValue), event)
+             } catch {
+-              case _: Throwable => (null, event)
++              case _: Throwable => (None, event)
+             }
+         }
+         .groupByKey
+diff --git a/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala b/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala
+index 3401332..5926cfa 100644
+--- a/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala
++++ b/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala
+@@ -6,21 +6,19 @@ import scio.koans.shared._
+  * Fix the non-deterministic coder exception.
+  */
+ class K02_LatLon1 extends PipelineKoan {
+-  ImNotDone
+-
+   import K02_LatLon1._
+ 
+   val events: Seq[(LatLon, String)] = Seq(
+-    (LatLon(34.5, -10.0), "a"),
+-    (LatLon(67.8, 12.3), "b"),
+-    (LatLon(67.8, 12.3), "c"),
+-    (LatLon(-45.0, 3.14), "d")
++    (LatLon(345000, -100000), "a"),
++    (LatLon(678000, 123000), "b"),
++    (LatLon(678000, 123000), "c"),
++    (LatLon(-450000, 31400), "d")
+   )
+ 
+   val expected: Seq[(LatLon, Set[String])] = Seq(
+-    (LatLon(34.5, -10.0), Set("a")),
+-    (LatLon(67.8, 12.3), Set("b", "c")),
+-    (LatLon(-45.0, 3.14), Set("d"))
++    (LatLon(345000, -100000), Set("a")),
++    (LatLon(678000, 123000), Set("b", "c")),
++    (LatLon(-450000, 31400), Set("d"))
+   )
+ 
+   "Snippet" should "work" in {
+@@ -42,5 +40,5 @@ object K02_LatLon1 {
+   // 1 minute = 60 seconds
+   // https://en.wikipedia.org/wiki/Decimal_degrees#Precision
+   // Hint: `Double` encoding is not deterministic but `Int` is
+-  case class LatLon(lat: Double, lon: Double)
++  case class LatLon(lat: Int, lon: Int)
+ }
+diff --git a/src/test/scala/scio/koans/a2_coders/K03_LatLon2.scala b/src/test/scala/scio/koans/a2_coders/K03_LatLon2.scala
+index 786409c..e225c39 100644
+--- a/src/test/scala/scio/koans/a2_coders/K03_LatLon2.scala
++++ b/src/test/scala/scio/koans/a2_coders/K03_LatLon2.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Fix the non-deterministic coder exception.
+  */
+ class K03_LatLon2 extends PipelineKoan {
+-  ImNotDone
+-
+   import K03_LatLon2._
+ 
+   val events: Seq[(LatLon, String)] = Seq(
+@@ -44,6 +42,9 @@ object K03_LatLon2 {
+     // Companion object of `LatLon` is searched for implicit `F[LatLon]`, i.e. `Coder[LatLon]`
+     // https://docs.scala-lang.org/tutorials/FAQ/finding-implicits.html
+     // Hint: derive a `LatLon` coder from a type with deterministic encoding
+-    implicit val latLonCoder: Coder[LatLon] = Coder.xmap(???)(???, ???)
++    implicit val latLonCoder: Coder[LatLon] = Coder.xmap(Coder[(Int, Int)])(
++      x => LatLon(x._1 / 10000.0, x._2.toDouble / 10000.0),
++      x => ((x.lat * 10000).toInt, (x.lon * 10000).toInt)
++    )
+   }
+ }
+diff --git a/src/test/scala/scio/koans/a3_serde/K00_Serializable.scala b/src/test/scala/scio/koans/a3_serde/K00_Serializable.scala
+index c99c0cc..52da07d 100644
+--- a/src/test/scala/scio/koans/a3_serde/K00_Serializable.scala
++++ b/src/test/scala/scio/koans/a3_serde/K00_Serializable.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Serialize a simple object.
+  */
+ class K00_Serializable extends Koan {
+-  ImNotDone
+-
+   "K00a" should "be serializable" in {
+     val obj = SerializableUtils.roundTrip(new K00a)
+     obj.x shouldBe 0
+@@ -26,7 +24,7 @@ class K00a extends Serializable {
+   val x = 0
+ }
+ 
+-class K00b {
++class K00b extends Serializable {
+   val x = 0
+ }
+ 
+diff --git a/src/test/scala/scio/koans/a3_serde/K01_Lambda.scala b/src/test/scala/scio/koans/a3_serde/K01_Lambda.scala
+index fa1626a..6dee8ae 100644
+--- a/src/test/scala/scio/koans/a3_serde/K01_Lambda.scala
++++ b/src/test/scala/scio/koans/a3_serde/K01_Lambda.scala
+@@ -6,8 +6,6 @@ import scio.koans.shared._
+  * Serialize a simple lambda.
+  */
+ class K01_Lambda extends Koan {
+-  ImNotDone
+-
+   "K01a" should "be serializable" in {
+     val obj = SerializableUtils.roundTrip((new K01a).plusOne _)
+     obj(0) shouldBe 1
+@@ -23,6 +21,6 @@ class K01a extends Serializable {
+   def plusOne(x: Int): Int = x + 1
+ }
+ 
+-class K01b {
++class K01b extends Serializable {
+   def plusOne(x: Int): Int = x + 1
+ }
+diff --git a/src/test/scala/scio/koans/a3_serde/K02_AvroSchema.scala b/src/test/scala/scio/koans/a3_serde/K02_AvroSchema.scala
+index 442f2f9..aa11907 100644
+--- a/src/test/scala/scio/koans/a3_serde/K02_AvroSchema.scala
++++ b/src/test/scala/scio/koans/a3_serde/K02_AvroSchema.scala
+@@ -11,8 +11,6 @@ import scala.collection.JavaConverters._
+  * Serialize a simple object with non-serializable member.
+  */
+ class K02_AvroSchema extends Koan {
+-  ImNotDone
+-
+   "K02a" should "be serializable" in {
+     val obj = SerializableUtils.roundTrip(new K02a(" "))
+     val result = obj.splitter.split("a b c").asScala
+@@ -37,4 +35,7 @@ class K02a(val separator: String) extends Serializable {
+ }
+ 
+ // Hint: `Schema` is not serializable but `String` is
+-class K02b(val schema: Schema) extends Serializable {}
++class K02b(s: Schema) extends Serializable {
++  val schemaString: String = s.toString
++  def schema: Schema = new Schema.Parser().parse(schemaString)
++}
+diff --git a/src/test/scala/scio/koans/a3_serde/K03_Static.scala b/src/test/scala/scio/koans/a3_serde/K03_Static.scala
+index 84c9c98..0704455 100644
+--- a/src/test/scala/scio/koans/a3_serde/K03_Static.scala
++++ b/src/test/scala/scio/koans/a3_serde/K03_Static.scala
+@@ -8,12 +8,10 @@ import scala.collection.JavaConverters._
+  * Serialize a simple object with non-serializable member.
+  */
+ class K03_Static extends Koan {
+-  ImNotDone
+-
+   import K03_Static._
+ 
+   // Hint: `class K03_Static` includes non-serializable members from ScalaTest and is not fixable
+-  def plusTwo(x: Int): Int = x + 2
++  // def plusTwo(x: Int): Int = x + 2
+ 
+   "plusOne" should "be serializable" in {
+     val obj = SerializableUtils.roundTrip(plusOne _)
+@@ -30,4 +28,5 @@ object K03_Static {
+   // Members of `object X` are static and initialized at class loading time
+   // They do not go through serialization
+   def plusOne(x: Int): Int = x + 1
++  def plusTwo(x: Int): Int = x + 2
+ }
+diff --git a/src/test/scala/scio/koans/a3_serde/K04_WordCount1.scala b/src/test/scala/scio/koans/a3_serde/K04_WordCount1.scala
+index 0aba24b..1d0a0c3 100644
+--- a/src/test/scala/scio/koans/a3_serde/K04_WordCount1.scala
++++ b/src/test/scala/scio/koans/a3_serde/K04_WordCount1.scala
+@@ -6,8 +6,6 @@ import scio.koans.shared._
+  * Fix the `NotSerializableException`.
+  */
+ class K04_WordCount1 extends PipelineKoan {
+-  ImNotDone
+-
+   import K04_WordCount1._
+ 
+   val input: Seq[String] = Seq("a b c", "b c d", "c d e")
+@@ -28,7 +26,7 @@ class K04_WordCount1 extends PipelineKoan {
+ }
+ 
+ object K04_WordCount1 {
+-  class Tokenizer(val stopWords: Set[String]) {
++  class Tokenizer(val stopWords: Set[String]) extends Serializable {
+     def tokenize(line: String): Seq[String] = line
+       .split("[^a-zA-Z']+")
+       .filter { w =>
+diff --git a/src/test/scala/scio/koans/a3_serde/K05_WordCount2.scala b/src/test/scala/scio/koans/a3_serde/K05_WordCount2.scala
+index c305538..8a1fcae 100644
+--- a/src/test/scala/scio/koans/a3_serde/K05_WordCount2.scala
++++ b/src/test/scala/scio/koans/a3_serde/K05_WordCount2.scala
+@@ -11,15 +11,13 @@ import scala.collection.JavaConverters._
+  * Fix the `NotSerializableException`.
+  */
+ class K05_WordCount2 extends PipelineKoan {
+-  ImNotDone
+-
+   val input: Seq[String] = Seq("a b c", "b c d", "c d e")
+   val expected: Seq[(String, Long)] = Seq(("a", 1), ("b", 2), ("c", 3), ("d", 2), ("e", 1))
+ 
+   "Snippet" should "work" in {
+     runWithContext { sc =>
+       // Hint: delay the `tokenizer` initialization
+-      val tokenizer = Splitter
++      lazy val tokenizer = Splitter
+         .on(Pattern.compile("[^a-zA-Z']+"))
+         .omitEmptyStrings()
+ 
+diff --git a/src/test/scala/scio/koans/a3_serde/K06_WordCount3.scala b/src/test/scala/scio/koans/a3_serde/K06_WordCount3.scala
+index d6b5c1c..cceb0fe 100644
+--- a/src/test/scala/scio/koans/a3_serde/K06_WordCount3.scala
++++ b/src/test/scala/scio/koans/a3_serde/K06_WordCount3.scala
+@@ -11,8 +11,6 @@ import scala.collection.JavaConverters._
+  * Fix the `NotSerializableException`.
+  */
+ class K06_WordCount3 extends PipelineKoan {
+-  ImNotDone
+-
+   import K06_WordCount3._
+ 
+   val input: Seq[String] = Seq("a b c", "b c d", "c d e")
+@@ -34,7 +32,7 @@ class K06_WordCount3 extends PipelineKoan {
+ 
+ object K06_WordCount3 {
+   class Tokenizer(pattern: String, stopWords: Set[String]) extends Serializable {
+-    private val splitter = Splitter.on(Pattern.compile(pattern)).omitEmptyStrings()
++    private lazy val splitter = Splitter.on(Pattern.compile(pattern)).omitEmptyStrings()
+ 
+     def tokenize(line: String): Iterable[String] =
+       splitter.split(line).asScala.filter(!stopWords.contains(_))
+diff --git a/src/test/scala/scio/koans/a3_serde/K07_WordCount4.scala b/src/test/scala/scio/koans/a3_serde/K07_WordCount4.scala
+index 52b3b33..1db73df 100644
+--- a/src/test/scala/scio/koans/a3_serde/K07_WordCount4.scala
++++ b/src/test/scala/scio/koans/a3_serde/K07_WordCount4.scala
+@@ -6,10 +6,7 @@ import scio.koans.shared._
+  * Fix the `NotSerializableException`.
+  */
+ class K07_WordCount4 extends PipelineKoan {
+-  ImNotDone
+-
+   val input: Seq[String] = Seq("a b c", "b c d", "c d e")
+-  val expected: Set[(String, Long)] = Set(("a", 1), ("b", 2), ("c", 3), ("d", 2), ("e", 1))
+ 
+   "Snippet" should "work" in {
+     runWithContext { sc =>
+@@ -19,7 +16,12 @@ class K07_WordCount4 extends PipelineKoan {
+         .countByValue
+ 
+       // Hint: `_.toSet == expect` is a lambda that pulls in `expected`
++      import K07_WordCount4._
+       output should satisfy[(String, Long)](_.toSet == expected)
+     }
+   }
+ }
++
++object K07_WordCount4 {
++  val expected: Set[(String, Long)] = Set(("a", 1), ("b", 2), ("c", 3), ("d", 2), ("e", 1))
++}
+diff --git a/src/test/scala/scio/koans/b1_reduce/K00_Count.scala b/src/test/scala/scio/koans/b1_reduce/K00_Count.scala
+index ce43faf..242e60d 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K00_Count.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K00_Count.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * A `TransformKoan` tests Scio transforms, i.e. `SCollection[InT] => SCollection[OutT]`.
+  */
+ class K00_Count extends TransformKoan {
+-  ImNotDone // FIXME: delete this to move on to the next one
+-
+   // Input type
+   type InT = SCollection[String]
+ 
+@@ -31,7 +29,7 @@ class K00_Count extends TransformKoan {
+   // FIXME: implement this to make the test pass
+   test("v1") {
+     // Hint: `map` elements to `Long`
+-    _.map(_ => ?:[Long]).reduce(???)
++    _.map(_ => 1L).reduce(_ + _)
+   }
+ 
+   // Add as many alternatives as you like
+diff --git a/src/test/scala/scio/koans/b1_reduce/K01_ReduceByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K01_ReduceByKey1.scala
+index 31efdfc..2f36cfc 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K01_ReduceByKey1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K01_ReduceByKey1.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Replace `groupByKey` with `reduceByKey`.
+  */
+ class K01_ReduceByKey1 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = SCollection[(String, Int)]
+ 
+@@ -33,6 +31,6 @@ class K01_ReduceByKey1 extends TransformKoan {
+   }
+ 
+   test("v1") {
+-    _.reduceByKey(???)
++    _.reduceByKey(_ + _)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K02_ReduceByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K02_ReduceByKey2.scala
+index f777d18..643c855 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K02_ReduceByKey2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K02_ReduceByKey2.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Replace `groupByKey` with `reduceByKey`.
+  */
+ class K02_ReduceByKey2 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = SCollection[(String, (Int, Int))]
+ 
+@@ -32,6 +30,6 @@ class K02_ReduceByKey2 extends TransformKoan {
+ 
+   // Hint: count and sum at the same time over `(Int, Int)`
+   test("v1") {
+-    _.mapValues(v => ?:[(Int, Int)]).reduceByKey(???)
++    _.mapValues(v => (1, v)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2))
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K03_ReduceByKey3.scala b/src/test/scala/scio/koans/b1_reduce/K03_ReduceByKey3.scala
+index 4b9cb97..b44efcb 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K03_ReduceByKey3.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K03_ReduceByKey3.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Compute min and max values by key.
+  */
+ class K03_ReduceByKey3 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = SCollection[(String, (Int, Int))]
+ 
+@@ -35,7 +33,7 @@ class K03_ReduceByKey3 extends TransformKoan {
+   // Hint: `Seq(10).min = 10`, `Seq(10).max = 10`
+   // How does this compare with `baseline` in terms of shuffle?
+   test("v1") {
+-    _.mapValues(v => ?:[(Int, Int)])
+-      .reduceByKey(???)
++    _.mapValues(v => (v, v))
++      .reduceByKey((x, y) => (math.min(x._1, y._1), math.max(x._2, y._2)))
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K04_ReduceByKey4.scala b/src/test/scala/scio/koans/b1_reduce/K04_ReduceByKey4.scala
+index 44c1e8c..03485de 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K04_ReduceByKey4.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K04_ReduceByKey4.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Count distinct values by key.
+  */
+ class K04_ReduceByKey4 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = SCollection[(String, Long)]
+ 
+@@ -34,8 +32,8 @@ class K04_ReduceByKey4 extends TransformKoan {
+ 
+   // How does this compare with `baseline` in terms of shuffle?
+   test("v1") {
+-    _.mapValues(v => ?:[Set[Int]])
+-      .reduceByKey(???)
+-      .mapValues(???)
++    _.mapValues(v => Set(v))
++      .reduceByKey(_ ++ _)
++      .mapValues(_.size)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K05_ReduceByKey5.scala b/src/test/scala/scio/koans/b1_reduce/K05_ReduceByKey5.scala
+index bfd54bc..721c9d4 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K05_ReduceByKey5.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K05_ReduceByKey5.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Compute count, sum, min, max, and distinct count by key.
+  */
+ class K05_ReduceByKey5 extends TransformKoan {
+-  ImNotDone
+-
+   import K05_ReduceByKey5._
+ 
+   type InT = SCollection[(String, Int)]
+@@ -39,9 +37,11 @@ class K05_ReduceByKey5 extends TransformKoan {
+ 
+   // How does this compare with `baseline` in terms of shuffle?
+   test("v1") {
+-    _.mapValues(v => ?:[(Int, Int, Int, Int, Set[Int])])
+-      .reduceByKey(???)
+-      .mapValues(v => ?:[Stats])
++    _.mapValues(v => (1, v, v, v, Set(v)))
++      .reduceByKey { (x, y) =>
++        (x._1 + y._1, x._2 + y._2, math.min(x._3, y._3), math.max(x._4, y._4), x._5 ++ y._5)
++      }
++      .mapValues(v => Stats(v._1, v._2, v._3, v._4, v._5.size))
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b1_reduce/K06_Semigroup.scala b/src/test/scala/scio/koans/b1_reduce/K06_Semigroup.scala
+index 8230b92..5aa1bc6 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K06_Semigroup.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K06_Semigroup.scala
+@@ -6,8 +6,6 @@ import scio.koans.shared._
+  * Abstract reduce binary operations with `Semigroup`s.
+  */
+ class K06_Semigroup extends Koan {
+-  ImNotDone
+-
+   import K06_Semigroup._
+ 
+   // `Semigroup[T]` argument is usually implicit.
+@@ -35,14 +33,14 @@ class K06_Semigroup extends Koan {
+   "Max semigroup" should "work" in {
+     case class Max(v: Int)
+     // Hint: max is the opposite of min
+-    implicit val maxSemigroup: Semigroup[Max] = ???
++    implicit val maxSemigroup: Semigroup[Max] = (x, y) => Max(math.max(x.v, y.v))
+     testCombine(Max(1), Max(2), Max(2))
+     testCombineAllOption(Seq(Max(1), Max(2), Max(3)), Some(Max(3)))
+   }
+ 
+   "Set semigroup" should "work" in {
+     implicit val setSemigroup: Semigroup[Set[Int]] = new Semigroup[Set[Int]] {
+-      override def combine(x: Set[Int], y: Set[Int]): Set[Int] = ???
++      override def combine(x: Set[Int], y: Set[Int]): Set[Int] = x ++ y
+ 
+       override def combineAllOption(xs: TraversableOnce[Set[Int]]): Option[Set[Int]] =
+         if (xs.isEmpty) {
+@@ -52,7 +50,7 @@ class K06_Semigroup extends Koan {
+           // Use a mutable builder to reduce overhead
+           val b = Set.newBuilder[Int]
+           xs.foreach { x =>
+-            ???
++            x.foreach(b += _)
+           }
+           Some(b.result())
+         }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
+index f772764..cbd6247 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `reduceByKey` with `sumByKey`.
+  */
+ class K07_SumByKey1 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
+ 
+@@ -50,8 +48,9 @@ class K07_SumByKey1 extends TransformKoan {
+ 
+     // FIXME: implement these with `sumByKey`
+     // Hint: Algebird also provides implicit `Semigroup[Max[Int]]` and `Semigroup[Set[Int]]`
+-    val max: SCollection[(String, Int)] = ???
+-    val distinctCount: SCollection[(String, Int)] = ???
++    val max: SCollection[(String, Int)] = input.mapValues(Max(_)).sumByKey.mapValues(_.get)
++    val distinctCount: SCollection[(String, Int)] =
++      input.mapValues(Set(_)).sumByKey.mapValues(_.size)
+ 
+     (min, max, distinctCount)
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K08_SumByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K08_SumByKey2.scala
+index 0f4d0cf..a1d2a72 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K08_SumByKey2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K08_SumByKey2.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `reduceByKey` with `sumByKey`.
+  */
+ class K08_SumByKey2 extends TransformKoan {
+-  ImNotDone
+-
+   import K08_SumByKey2._
+ 
+   type InT = SCollection[(String, Int)]
+@@ -45,8 +43,8 @@ class K08_SumByKey2 extends TransformKoan {
+   // Hint: Algebird provides implicit `Semigroup[T]` for `T = Int, Min[Int], Max[Int], Set[Int]`
+   // And can derive one for tuples e.g. `Semigroup[(Int, Int, Min[Int], Max[Int], Set[Int])]`
+   test("v1") {
+-    _.mapValues(v => ?:[(Int, Int, Min[Int], Max[Int], Set[Int])]).sumByKey
+-      .mapValues(v => ?:[Stats])
++    _.mapValues(v => (1, v, Min(v), Max(v), Set(v))).sumByKey
++      .mapValues(v => Stats(v._1, v._2, v._3.get, v._4.get, v._5.size))
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b1_reduce/K09_Monoid.scala b/src/test/scala/scio/koans/b1_reduce/K09_Monoid.scala
+index 8f3fee3..421990b 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K09_Monoid.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K09_Monoid.scala
+@@ -6,8 +6,6 @@ import scio.koans.shared._
+  * Abstract reduce binary operations with `Monoid`s.
+  */
+ class K09_Monoid extends Koan {
+-  ImNotDone
+-
+   import K09_Monoid._
+ 
+   def testCombine[T](x: T, y: T, expected: T)(implicit mon: Monoid[T]): Unit =
+@@ -32,13 +30,13 @@ class K09_Monoid extends Koan {
+ 
+   "Max monoid" should "work" in {
+     case class Max(v: Int)
+-    implicit val maxMon: Monoid[Max] = ???
++    implicit val maxMon: Monoid[Max] = Monoid(Max(Int.MinValue))((x, y) => Max(math.max(x.v, y.v)))
+     testCombine(Max(1), Max(2), Max(2))
+     testCombineAll(Seq(Max(1), Max(2), Max(3)), Max(3))
+   }
+ 
+   "Set monoid" should "work" in {
+-    implicit val setMon: Monoid[Set[Int]] = Monoid(???)(???)
++    implicit val setMon: Monoid[Set[Int]] = Monoid(Set.empty[Int])(_ ++ _)
+     testCombine(Set(1), Set(2), Set(1, 2))
+     testCombineAll(Seq(Set(1), Set(2), Set(3)), Set(1, 2, 3))
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
+index aecdb76..6821c48 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `reduceByKey` with `foldByKey`.
+  */
+ class K10_FoldByKey1 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
+ 
+@@ -50,8 +48,9 @@ class K10_FoldByKey1 extends TransformKoan {
+ 
+     // FIXME: implement these with `foldByKey`
+     // Hint: Algebird also provides implicit `Monoid[Max[Int]]` and `Monoid[Set[Int]]`
+-    val max: SCollection[(String, Int)] = ???
+-    val distinctCount: SCollection[(String, Int)] = ???
++    val max: SCollection[(String, Int)] = input.mapValues(Max(_)).foldByKey.mapValues(_.get)
++    val distinctCount: SCollection[(String, Int)] =
++      input.mapValues(Set(_)).foldByKey.mapValues(_.size)
+ 
+     (min, max, distinctCount)
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K11_FoldByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K11_FoldByKey2.scala
+index bcf4a32..1fddcad 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K11_FoldByKey2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K11_FoldByKey2.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `reduceByKey` with `foldByKey`.
+  */
+ class K11_FoldByKey2 extends TransformKoan {
+-  ImNotDone
+-
+   import K11_FoldByKey2._
+ 
+   type InT = SCollection[(String, Int)]
+@@ -45,8 +43,8 @@ class K11_FoldByKey2 extends TransformKoan {
+   // Hint: Algebird provides implicit `Monoid[T]` for `T = Int, Min[Int], Max[Int], Set[Int]`
+   // And can derive one for tuples e.g. `Monoid[(Int, Int, Min[Int], Max[Int], Set[Int])]`
+   test("v1") {
+-    _.mapValues(v => ?:[(Int, Int, Min[Int], Max[Int], Set[Int])]).foldByKey
+-      .mapValues(v => ?:[Stats])
++    _.mapValues(v => (1, v, Min(v), Max(v), Set(v))).foldByKey
++      .mapValues(v => Stats(v._1, v._2, v._3.get, v._4.get, v._5.size))
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala b/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
+index e2e3bf5..722add7 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `foldByKey` with `combineByKey` or `aggregateByKey`.
+  */
+ class K12_CombineAggregate extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
+ 
+@@ -46,11 +44,11 @@ class K12_CombineAggregate extends TransformKoan {
+ 
+   test("combineByKey") { input =>
+     val min = input.combineByKey(identity)(math.min)(math.min)
+-    val max = ???
++    val max = input.combineByKey(identity)(math.max)(math.max)
+ 
+-    def createCombiner(x: Int): Set[Int] = ???
+-    def mergeValue(c: Set[Int], x: Int): Set[Int] = ???
+-    def mergeCombiners(x: Set[Int], y: Set[Int]): Set[Int] = ???
++    def createCombiner(x: Int): Set[Int] = Set(x)
++    def mergeValue(c: Set[Int], x: Int): Set[Int] = c + x
++    def mergeCombiners(x: Set[Int], y: Set[Int]): Set[Int] = x ++ y
+     val distinctCount = input
+       .combineByKey(createCombiner)(mergeValue)(mergeCombiners)
+       .mapValues(_.size)
+@@ -60,10 +58,10 @@ class K12_CombineAggregate extends TransformKoan {
+ 
+   test("aggregateByKey") { input =>
+     val min = input.aggregateByKey(Int.MaxValue)(math.min, math.min)
+-    val max = ???
++    val max = input.aggregateByKey(Int.MinValue)(math.max, math.max)
+ 
+-    def seqOp(accum: Set[Int], v: Int): Set[Int] = ???
+-    def combOp(x: Set[Int], y: Set[Int]): Set[Int] = ???
++    def seqOp(accum: Set[Int], v: Int): Set[Int] = accum + v
++    def combOp(x: Set[Int], y: Set[Int]): Set[Int] = x ++ y
+     val distinctCount = input
+       .aggregateByKey(Set.empty[Int])(seqOp, combOp)
+       .mapValues(_.size)
+diff --git a/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala b/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
+index adfcf6c..75ea865 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
+@@ -6,8 +6,6 @@ import scio.koans.shared._
+  * Abstract reduce binary operations with `Aggregator`s.
+  */
+ class K13_Aggregator extends Koan {
+-  ImNotDone
+-
+   import K13_Aggregator._
+ 
+   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
+@@ -24,13 +22,13 @@ class K13_Aggregator extends Koan {
+   "Max aggregator" should "work" in {
+     case class Max(v: Int)
+     implicit val maxSg: Semigroup[Max] = (x, y) => Max(math.max(x.v, y.v))
+-    val aggregator = ???
++    val aggregator = Aggregator[Int, Max, Int](Max)(_.v)
+     testAggregator(Seq(1, 2, 3), 3)(aggregator)
+   }
+ 
+   "Distinct count aggregator" should "work" in {
+     implicit val setSg: Semigroup[Set[Int]] = Semigroup(_ ++ _)
+-    val aggregator = ???
++    val aggregator = Aggregator[Int, Set[Int], Int](Set(_))(_.size)
+     testAggregator(Seq(1, 1, 1, 2, 2, 3), 3)(aggregator)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
+index 30d39c2..8e2e9fa 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `foldByKey` with `aggregateByKey`.
+  */
+ class K14_AggregateByKey1 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[(String, Int)]
+   type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
+ 
+@@ -50,10 +48,10 @@ class K14_AggregateByKey1 extends TransformKoan {
+ 
+     // FIXME: implement these with `aggregateByKey`
+     // Hint: Algebird also provides `MaxAggregator`.
+-    val max: SCollection[(String, Int)] = ???
++    val max: SCollection[(String, Int)] = input.aggregateByKey(Aggregator.max[Int])
+ 
+     val distinctCountAggregator: Aggregator[Int, Set[Int], Int] = Aggregator.uniqueCount[Int]
+-    val distinctCount: SCollection[(String, Int)] = ???
++    val distinctCount: SCollection[(String, Int)] = input.aggregateByKey(distinctCountAggregator)
+ 
+     (min, max, distinctCount)
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
+index 38320a2..631e4bc 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Replace `foldByKey` with `aggregateByKey`.
+  */
+ class K15_AggregateByKey2 extends TransformKoan {
+-  ImNotDone
+-
+   import K15_AggregateByKey2._
+ 
+   type InT = SCollection[(String, Int)]
+@@ -44,9 +42,9 @@ class K15_AggregateByKey2 extends TransformKoan {
+   val sumA = Aggregator.fromMonoid[Int]
+ 
+   // Lazy so the test class can be instantiated
+-  lazy val minA: Aggregator[Int, _, Int] = ???
+-  lazy val maxA: Aggregator[Int, _, Int] = ???
+-  lazy val distinctCountA: Aggregator[Int, _, Int] = ???
++  lazy val minA: Aggregator[Int, _, Int] = Aggregator.min
++  lazy val maxA: Aggregator[Int, _, Int] = Aggregator.max
++  lazy val distinctCountA: Aggregator[Int, _, Int] = Aggregator.uniqueCount
+ 
+   test("v1") { input =>
+     // Joining aggregators
+@@ -59,7 +57,7 @@ class K15_AggregateByKey2 extends TransformKoan {
+         .andThenPresent {
+           case ((((count, sum), min), max), distinctCount) =>
+             // FIXME: present results as `Stats`
+-            ???
++            Stats(count, sum, min, max, distinctCount)
+         }
+     input.aggregateByKey(multiAggregator)
+   }
+@@ -70,7 +68,7 @@ class K15_AggregateByKey2 extends TransformKoan {
+       MultiAggregator(countA, sumA, minA, maxA, distinctCountA)
+         .andThenPresent { c =>
+           // FIXME: present `c` as `Stats`
+-          ???
++          Stats(c._1, c._2, c._3, c._4, c._5)
+         }
+     input.aggregateByKey(multiAggregator)
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala b/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
+index ab655a5..c5dbbe4 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Compute count, mean, variance and standard deviation with Moments.
+  */
+ class K16_Moments1 extends TransformKoan {
+-  ImNotDone
+-
+   import K16_Moments1._
+ 
+   type InT = SCollection[Int]
+@@ -60,15 +58,15 @@ class K16_Moments1 extends TransformKoan {
+   test("v1") {
+     // `Moments` can compute mean, count, variance, standard deviation, etc. in parallel.
+     _.map(x => Moments(x)).sum // Algebird provides implicit `Semigroup[Moments]`
+-      .map(m => ?:[Stats])
++      .map(m => Stats(m.count, m.mean, m.variance, m.stddev))
+   }
+ 
+   test("v2") { input =>
+     // `MomentsAggregator` is of type `MonoidAggregator[Double, Moments, Moments]`
+     // We want `Int => Double` in `prepare` and `Moments` => `Stats` in `present`
+     val aggregator: Aggregator[Int, Moments, Stats] = MomentsAggregator
+-      .composePrepare((x: Int) => ???)
+-      .andThenPresent(m => ???)
++      .composePrepare((x: Int) => x.toDouble)
++      .andThenPresent(m => Stats(m.count, m.mean, m.variance, m.stddev))
+     input.aggregate(aggregator)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala b/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
+index 069714b..cc3cf7b 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Compute min, max, sum, count, mean, variance and standard deviation with Moments.
+  */
+ class K17_Moments2 extends TransformKoan {
+-  ImNotDone
+-
+   import K17_Moments2._
+ 
+   type InT = SCollection[Int]
+@@ -69,7 +67,7 @@ class K17_Moments2 extends TransformKoan {
+     _.map(x => (Min(x), Max(x), x, Moments(x))).sum
+       .map {
+         case (min, max, sum, m) =>
+-          ?:[Stats]
++          Stats(min.get, max.get, sum, m.count, m.mean, m.variance, m.stddev)
+       }
+   }
+ 
+@@ -77,10 +75,16 @@ class K17_Moments2 extends TransformKoan {
+     val min = Aggregator.min[Int]
+     val max = Aggregator.max[Int]
+     val sum = Aggregator.fromMonoid[Int]
+-    val moments: Aggregator[Int, Moments, Moments] = ???
++    val moments: Aggregator[Int, Moments, Moments] =
++      MomentsAggregator.composePrepare((x: Int) => x.toDouble)
+ 
+     // Compose from multiple aggregators
+-    val multiAggregator: Aggregator[Int, _, Stats] = ???
++    val multiAggregator: Aggregator[Int, _, Stats] =
++      MultiAggregator(min, max, sum, moments)
++        .andThenPresent {
++          case (min, max, sum, m) =>
++            Stats(min, max, sum, m.count, m.mean, m.variance, m.stddev)
++        }
+ 
+     input.aggregate(multiAggregator)
+   }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala b/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
+index b4b6499..7151a61 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
+@@ -7,35 +7,33 @@ import scio.koans.shared._
+  * More aggregators.
+  */
+ class K18_MoreAggregators1 extends Koan {
+-  ImNotDone
+-
+   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
+     aggregator(xs) shouldBe expected
+ 
+   "Aggregator" should "support size" in {
+     testAggregator(1 to 100, 100L)(Aggregator.size)
+-    testAggregator(1 to 50, ???)(Aggregator.size)
++    testAggregator(1 to 50, 50L)(Aggregator.size)
+   }
+ 
+   it should "support count" in {
+     testAggregator(1 to 100, 50L)(Aggregator.count(_ % 2 == 0))
+-    testAggregator(1 to 100, ???)(Aggregator.count(_ % 2 == 1))
++    testAggregator(1 to 100, 50L)(Aggregator.count(_ % 2 == 1))
+   }
+ 
+   it should "support uniqueCount" in {
+     testAggregator(Seq("a", "a", "a", "b", "b", "c"), 3)(Aggregator.uniqueCount)
+-    testAggregator(Seq("a", "a", "b"), ???)(Aggregator.uniqueCount)
++    testAggregator(Seq("a", "a", "b"), 2)(Aggregator.uniqueCount)
+   }
+ 
+   it should "support numericSum" in {
+     testAggregator(1 to 100, 5050.0)(Aggregator.numericSum)
+-    testAggregator(1 to 10, ???)(Aggregator.numericSum)
++    testAggregator(1 to 10, 55.0)(Aggregator.numericSum)
+   }
+ 
+   it should "support min/max" in {
+     testAggregator((1 to 100), 1)(Aggregator.min)
+     testAggregator((1 to 100), 100)(Aggregator.max)
+-    testAggregator(Seq("a", "b", "c"), ???)(Aggregator.min)
+-    testAggregator(Seq("a", "b", "c"), "c")(???)
++    testAggregator(Seq("a", "b", "c"), "a")(Aggregator.min)
++    testAggregator(Seq("a", "b", "c"), "c")(Aggregator.max)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
+index dcbfb13..2b38181 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * More aggregators.
+  */
+ class K19_MoreAggregators2 extends Koan {
+-  ImNotDone
+-
+   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
+     aggregator(xs) shouldBe expected
+ 
+@@ -19,18 +17,18 @@ class K19_MoreAggregators2 extends Koan {
+       ("c", 1)
+     )
+     testAggregator(xs, ("a", 2))(Aggregator.minBy(_._1))
+-    testAggregator(xs, ("c", 1))(???)
+-    testAggregator(xs, ???)(Aggregator.minBy(_._2))
+-    testAggregator(xs, ("b", 3))(???)
++    testAggregator(xs, ("c", 1))(Aggregator.maxBy(_._1))
++    testAggregator(xs, ("c", 1))(Aggregator.minBy(_._2))
++    testAggregator(xs, ("b", 3))(Aggregator.maxBy(_._2))
+   }
+ 
+   it should "support exists" in {
+-    testAggregator(1 to 100, ???)(Aggregator.exists(_ % 2 == 0))
+-    testAggregator(1 to 100, ???)(Aggregator.exists(_ % 2 == 1))
++    testAggregator(1 to 100, true)(Aggregator.exists(_ % 2 == 0))
++    testAggregator(1 to 100, true)(Aggregator.exists(_ % 2 == 1))
+   }
+ 
+   it should "support forall" in {
+     testAggregator(0 to 100 by 2, true)(Aggregator.forall(_ % 2 == 0))
+-    testAggregator(1 to 99 by 2, ???)(Aggregator.forall(_ % 2 == 1))
++    testAggregator(1 to 99 by 2, true)(Aggregator.forall(_ % 2 == 1))
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
+index cc11416..7c77963 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
+@@ -9,8 +9,6 @@ import scala.util.Random
+  * More aggregators.
+  */
+ class K20_MoreAggregators3 extends Koan {
+-  ImNotDone
+-
+   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
+     aggregator(xs) shouldBe expected
+ 
+@@ -18,15 +16,15 @@ class K20_MoreAggregators3 extends Koan {
+     // Fixed seed so that `sample.size` is deterministic
+     val aggregator = Aggregator.randomSample[Int](0.1, seed = 1234)
+     val sample = aggregator(1 to 100)
+-    sample.forall(x => x >= 1 && x <= 100) shouldBe ?:[Boolean]
++    sample.forall(x => x >= 1 && x <= 100) shouldBe true
+     sample.size shouldBe 10 // This may vary depending on the seed
+   }
+ 
+   it should "support reservoirSample" in {
+     val aggregator = Aggregator.reservoirSample[Int](10)
+     val sample = aggregator(1 to 100)
+-    sample.forall(x => x >= 1 && x <= 100) shouldBe ?:[Boolean]
+-    sample.size shouldBe ?:[Int]
++    sample.forall(x => x >= 1 && x <= 100) shouldBe true
++    sample.size shouldBe 10
+   }
+ 
+   it should "support sorted{Reverse}Take" in {
+@@ -34,8 +32,8 @@ class K20_MoreAggregators3 extends Koan {
+ 
+     testAggregator(xs, Seq(1, 2, 3, 4, 5))(Aggregator.sortedTake(5))
+     testAggregator(xs, Seq(100, 99, 98, 97, 96))(Aggregator.sortedReverseTake(5))
+-    testAggregator(xs, ???)(Aggregator.sortedTake(3))
+-    testAggregator(xs, Seq(100, 99, 98))(???)
++    testAggregator(xs, Seq(1, 2, 3))(Aggregator.sortedTake(3))
++    testAggregator(xs, Seq(100, 99, 98))(Aggregator.sortedReverseTake(3))
+   }
+ 
+   it should "support sortBy{Reverse}Take" in {
+@@ -49,10 +47,11 @@ class K20_MoreAggregators3 extends Koan {
+       Seq("key-100" -> 100, "key-99" -> 99, "key-98" -> 98, "key-97" -> 97, "key-96" -> 96)
+     testAggregator(xs, expected2)(Aggregator.sortByReverseTake(5)(_._2))
+ 
+-    val expected3: Seq[(String, Int)] = ???
++    val expected3: Seq[(String, Int)] =
++      Seq("key-1" -> 1, "key-2" -> 2, "key-3" -> 3)
+     testAggregator(xs, expected3)(Aggregator.sortByTake(3)(_._2))
+ 
+     val expected4: Seq[(String, Int)] = Seq("key-100" -> 100, "key-99" -> 99, "key-98" -> 98)
+-    testAggregator(xs, expected4)(???)
++    testAggregator(xs, expected4)(Aggregator.sortByReverseTake(3)(_._2))
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala b/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
+index f924a6d..3246066 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Implement `join` with `cogroup`.
+  */
+ class K00_CoGroup extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, String)])
+   type OutT = (SCollection[(String, (Int, String))])
+ 
+@@ -62,7 +60,10 @@ class K00_CoGroup extends TransformKoan {
+         case (lv, rv) =>
+           // Implement Cartesian product of LHS * RHS values
+           /** Hint: remember [[scio.koans.a1_collections.K09_ForYield]]? */
+-          ???
++          for {
++            r <- rv
++            l <- lv
++          } yield (l, r)
+       }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
+index b470f81..9d70d4f 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Implement `leftOuterJoin` with `cogroup`.
+  */
+ class K01_LeftOuterJoin extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, String)])
+   type OutT = (SCollection[(String, (Int, Option[String]))])
+ 
+@@ -61,7 +59,12 @@ class K01_LeftOuterJoin extends TransformKoan {
+       lhs.cogroup(rhs).flatMapValues {
+         case (lv, rv) =>
+           // Hint: produce a single `None` if `rv` is empty
+-          ???
++          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
++            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
++          for {
++            r <- asOpts(rv)
++            l <- lv
++          } yield (l, r)
+       }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
+index e1b075f..c67c729 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Implement `rightOuterJoin` with `cogroup`.
+  */
+ class K02_RightOuterJoin extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, String)])
+   type OutT = (SCollection[(String, (Option[Int], String))])
+ 
+@@ -62,7 +60,12 @@ class K02_RightOuterJoin extends TransformKoan {
+       lhs.cogroup(rhs).flatMapValues {
+         case (lv, rv) =>
+           // Hint: produce a single `None` if `lv` is empty
+-          ???
++          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
++            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
++          for {
++            r <- rv
++            l <- asOpts(lv)
++          } yield (l, r)
+       }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
+index 0683f53..a031f17 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Implement `fullOuterJoin` with `cogroup`.
+  */
+ class K03_FullOuterJoin extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, String)])
+   type OutT = (SCollection[(String, (Option[Int], Option[String]))])
+ 
+@@ -67,7 +65,10 @@ class K03_FullOuterJoin extends TransformKoan {
+           // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
+           def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
+             if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
+-          ???
++          for {
++            r <- asOpts(rv)
++            l <- asOpts(lv)
++          } yield (l, r)
+       }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala b/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
+index e8f2bb6..ab231c1 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Reduce shuffles from joins and `groupByKey`.
+  */
+ class K04_GroupByKey extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, Int)])
+   type OutT = (SCollection[(String, Set[Int])])
+ 
+@@ -68,7 +66,7 @@ class K04_GroupByKey extends TransformKoan {
+       lhs.cogroup(rhs).mapValues {
+         case (lv, rv) =>
+           // Hint: map 2 `Iterable[Int]`s to `Set[Int]`
+-          ???
++          lv.toSet -- rv.toSet
+       }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala b/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
+index fb127dd..dc35fca 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Eliminate expensive shuffle with `SideInput`.
+  */
+ class K05_SideInput1 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(String, Int)])
+   type OutT = (SCollection[(String, Int)])
+ 
+@@ -69,7 +67,7 @@ class K05_SideInput1 extends TransformKoan {
+         .filter {
+           case ((k, v), ctx) =>
+             // Side input already prepared, no redundant conversion
+-            val sideMap: Map[String, Set[Int]] = ???
++            val sideMap: Map[String, Set[Int]] = ctx(side)
+             !sideMap.getOrElse(k, Set.empty).contains(v)
+         }
+         .toSCollection
+@@ -79,14 +77,14 @@ class K05_SideInput1 extends TransformKoan {
+     case (lhs, rhs) =>
+       // Prepare data into the desired form before making side input
+       // Hint: `.asMapSingletonSideInput` produces `SideInput[Map[K, V]]`, we want `Set[T]`
+-      val side: SideInput[Set[(String, Int)]] = ???
++      val side: SideInput[Set[(String, Int)]] = rhs.asSetSingletonSideInput
+       lhs
+         .withSideInputs(side)
+         .filter {
+           case ((k, v), ctx) =>
+             // Side input already prepared, no redundant conversion
+-            val sideSet: Set[(String, Int)] = ???
+-            ???
++            val sideSet: Set[(String, Int)] = ctx(side)
++            !sideSet.contains((k, v))
+         }
+         .toSCollection
+   }
+diff --git a/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala b/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
+index fbc1eac..c4d7176 100644
+--- a/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
++++ b/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
+@@ -7,8 +7,6 @@ import scio.koans.shared._
+  * Eliminate expensive shuffle with `SideInput`.
+  */
+ class K06_SideInput2 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[(String, Int)], SCollection[(Int, String)], SCollection[(String, String)])
+   type OutT = (SCollection[(String, String)])
+ 
+@@ -78,14 +76,16 @@ class K06_SideInput2 extends TransformKoan {
+   test("v1") {
+     case (lhs, i2e, e2s) =>
+       // 2 `SideInput`s, integer to English and English to Spanish
+-      val sideInt2En: SideInput[Map[Int, String]] = ???
+-      val sideEn2Es: SideInput[Map[String, String]] = ???
++      val sideInt2En: SideInput[Map[Int, String]] = i2e.asMapSingletonSideInput
++      val sideEn2Es: SideInput[Map[String, String]] = e2s.asMapSingletonSideInput
+       lhs
+         .withSideInputs(sideInt2En, sideEn2Es)
+         .map {
+           case ((k, v), ctx) =>
+             // Map values to Spanish
+-            ?:[(String, String)]
++            val en = ctx(sideInt2En)(v)
++            val es = ctx(sideEn2Es)(en)
++            (k, es)
+         }
+         .toSCollection
+   }
+@@ -93,13 +93,14 @@ class K06_SideInput2 extends TransformKoan {
+   test("v2") {
+     case (lhs, i2e, e2s) =>
+       // Build a single `SideInput` of integer to Spanish to reduce map lookup cost later
+-      val sideInt2Es: SideInput[Map[Int, String]] = ???
++      val sideInt2Es: SideInput[Map[Int, String]] =
++        i2e.swap.join(e2s).values.asMapSingletonSideInput
+       lhs
+         .withSideInputs(sideInt2Es)
+         .map {
+           case ((k, v), ctx) =>
+             // Map values to Spanish
+-            ?:[(String, String)]
++            (k, ctx(sideInt2Es)(v))
+         }
+         .toSCollection
+   }
+diff --git a/src/test/scala/scio/koans/b3_dofn/K00_Map.scala b/src/test/scala/scio/koans/b3_dofn/K00_Map.scala
+index a628747..fcf88cf 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K00_Map.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K00_Map.scala
+@@ -9,8 +9,6 @@ import scio.koans.shared._
+  * Implement `map` with `DoFn`.
+  */
+ class K00_Map extends TransformKoan {
+-  ImNotDone
+-
+   import K00_Map._
+ 
+   type InT = SCollection[Int]
+@@ -34,6 +32,7 @@ class K00_Map extends TransformKoan {
+ object K00_Map {
+   // https://beam.apache.org/documentation/programming-guide/#pardo
+   class MyDoFn extends DoFn[Int, Int] {
+-    @ProcessElement def processElement(context: ProcessContext): Unit = ???
++    @ProcessElement def processElement(context: ProcessContext): Unit =
++      context.output(context.element() + 100)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b3_dofn/K01_Filter.scala b/src/test/scala/scio/koans/b3_dofn/K01_Filter.scala
+index 4b24522..215667c 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K01_Filter.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K01_Filter.scala
+@@ -9,8 +9,6 @@ import scio.koans.shared._
+  * Implement `filter` with `DoFn`.
+  */
+ class K01_Filter extends TransformKoan {
+-  ImNotDone
+-
+   import K01_Filter._
+ 
+   type InT = SCollection[Int]
+@@ -33,6 +31,9 @@ class K01_Filter extends TransformKoan {
+ 
+ object K01_Filter {
+   class MyDoFn extends DoFn[Int, Int] {
+-    @ProcessElement def processElement(context: ProcessContext): Unit = ???
++    @ProcessElement def processElement(context: ProcessContext): Unit = {
++      val e = context.element()
++      if (e % 2 == 0) context.output(e)
++    }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b3_dofn/K02_FlatMap.scala b/src/test/scala/scio/koans/b3_dofn/K02_FlatMap.scala
+index 195827c..04d1567 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K02_FlatMap.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K02_FlatMap.scala
+@@ -9,8 +9,6 @@ import scio.koans.shared._
+  * Implement `flatMap` with `DoFn`.
+  */
+ class K02_FlatMap extends TransformKoan {
+-  ImNotDone
+-
+   import K02_FlatMap._
+ 
+   type InT = SCollection[Int]
+@@ -33,6 +31,9 @@ class K02_FlatMap extends TransformKoan {
+ 
+ object K02_FlatMap {
+   class MyDoFn extends DoFn[Int, Int] {
+-    @ProcessElement def processElement(context: ProcessContext): Unit = ???
++    @ProcessElement def processElement(context: ProcessContext): Unit = {
++      val x = context.element()
++      Iterable.fill(x)(x).foreach(context.output)
++    }
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala b/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
+index c56b8c2..696b885 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Understand `DoFn` serialization.
+  */
+ class K03_Counter1 extends PipelineKoan {
+-  ImNotDone
+-
+   import K03_Counter1._
+ 
+   val input: Seq[Int] = 1 to 10
+@@ -26,7 +24,7 @@ class K03_Counter1 extends PipelineKoan {
+     }
+ 
+     // Is this `doFn` instance executed by any worker at all?
+-    doFn.counter shouldBe ?:[Int]
++    doFn.counter shouldBe 0
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala b/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
+index 566a126..ec8acfa 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
+@@ -10,8 +10,6 @@ import scio.koans.shared._
+  * Understand `DoFn` serialization and resource sharing.
+  */
+ class K04_Counter2 extends PipelineKoan {
+-  ImNotDone
+-
+   import K04_Counter2._
+ 
+   val input: Seq[Int] = 1 to 10
+@@ -25,10 +23,10 @@ class K04_Counter2 extends PipelineKoan {
+       p should containInAnyOrder(expected)
+     }
+ 
+-    doFn.counter shouldBe ?:[Int]
++    doFn.counter shouldBe 0
+ 
+     // Would this work with `DataflowRunner`?
+-    MyDoFn.sharedCounter.get() shouldBe ?:[Int]
++    MyDoFn.sharedCounter.get() shouldBe 10
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala b/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
+index 0f8b13d..7b67588 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
+@@ -12,8 +12,6 @@ import scala.collection.JavaConverters._
+  * Understand `DoFn` parallelism.
+  */
+ class K05_Parallelism1 extends PipelineKoan {
+-  ImNotDone
+-
+   import K05_Parallelism1._
+ 
+   val input: Seq[Int] = 1 to 100
+@@ -26,10 +24,10 @@ class K05_Parallelism1 extends PipelineKoan {
+     }
+ 
+     // How many unique threads were used to run our `DoFn`?
+-    MyDoFn.sharedMap.size() shouldBe ?:[Int]
++    MyDoFn.sharedMap.size() shouldBe 8
+ 
+     // What's the sum of all values in our map?
+-    MyDoFn.sharedMap.asScala.values.sum shouldBe ?:[Int]
++    MyDoFn.sharedMap.asScala.values.sum shouldBe 100
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala b/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
+index cac7461..159086b 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
+@@ -11,8 +11,6 @@ import scio.koans.shared._
+  * Understand `DoFn` parallelism and resource sharing.
+  */
+ class K06_Parallelism2 extends PipelineKoan {
+-  ImNotDone
+-
+   import K06_Parallelism2._
+ 
+   val input: Seq[Int] = 1 to 100
+@@ -27,11 +25,11 @@ class K06_Parallelism2 extends PipelineKoan {
+     }
+ 
+     // How many unique `id`s were used to run our `DoFn`?
+-    MyDoFn.sharedMap.size() shouldBe ?:[Int]
++    MyDoFn.sharedMap.size() shouldBe 1
+ 
+     // What's the single key-value pair in our map?
+     // Would this work with `DataflowRunner`?
+-    MyDoFn.sharedMap.get(???) shouldBe ?:[Int]
++    MyDoFn.sharedMap.get(doFn.id) shouldBe 100
+   }
+ }
+ 
+diff --git a/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala b/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
+index dd06441..287e0f0 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
+@@ -12,8 +12,6 @@ import scio.koans.shared._
+  * Understand `DoFn` life cycle.
+  */
+ class K07_LifeCycle extends PipelineKoan {
+-  ImNotDone
+-
+   import K07_LifeCycle._
+ 
+   val input: Seq[Int] = 1 to 100
+@@ -28,14 +26,14 @@ class K07_LifeCycle extends PipelineKoan {
+     }
+ 
+     // How many times were `setup/startBundle/finishBundle/tearDown` called?
+-    MyDoFn.setups.get() shouldBe ?:[Int]
++    MyDoFn.setups.get() shouldBe 8
+ 
+     // Number of bundles is non-deterministic, but there should be a minimal at least?
+-    MyDoFn.startBundles.get() should be >= ?:[Int]
+-    MyDoFn.finishBundles.get() should be >= ?:[Int]
++    MyDoFn.startBundles.get() should be >= 8
++    MyDoFn.finishBundles.get() should be >= 8
+ 
+     // Number of `startBundle` calls should equal to the number of what other method calls?
+-    MyDoFn.startBundles.get() shouldBe ?:[Int]
++    MyDoFn.startBundles.get() shouldBe MyDoFn.finishBundles.get()
+ 
+     // `DirectRunner` may not call `tearDown` at all
+     // MyDoFn.tearDowns.get() shouldBe 8
+diff --git a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
+index 71997ff..2d96989 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
+@@ -13,8 +13,6 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
+  * Implement an `AsyncDoFn`.
+  */
+ class K08_AsyncDoFn extends PipelineKoan {
+-  ImNotDone
+-
+   import K08_AsyncDoFn._
+ 
+   val input: Seq[Int] = 1 to 100
+@@ -35,11 +33,12 @@ class K08_AsyncDoFn extends PipelineKoan {
+ 
+ object K08_AsyncDoFn {
+   class MyDoFn extends ScalaAsyncDoFn[Int, Int, Client] {
+-    override def getResourceType: DoFnWithResource.ResourceType = ???
++    override def getResourceType: DoFnWithResource.ResourceType =
++      DoFnWithResource.ResourceType.PER_INSTANCE
+ 
+-    override def createResource(): Client = ???
++    override def createResource(): Client = new Client
+ 
+-    override def processElement(input: Int): Future[Int] = ???
++    override def processElement(input: Int): Future[Int] = getResource.request(input)
+   }
+ 
+   class Client {
+diff --git a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
+index 189a2b9..b27f13f 100644
+--- a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
++++ b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
+@@ -15,8 +15,6 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
+  * Implement an `AsyncLookupDoFn`.
+  */
+ class K09_AsyncLookupDoFn extends PipelineKoan {
+-  ImNotDone
+-
+   import K09_AsyncLookupDoFn._
+ 
+   val input: Seq[Int] = Seq(1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 6)
+@@ -48,13 +46,13 @@ class K09_AsyncLookupDoFn extends PipelineKoan {
+         .applyTransform(ParDo.of(doFn))
+         .map { kv =>
+           // Handle failure and convert lookup result to `(Int, String)`
+-          ?:[(Int, String)]
++          (kv.getKey, kv.getValue.getOrElse("unknown"))
+         }
+       p should containInAnyOrder(expected)
+     }
+ 
+     // Hint: there are 16 input elements with some duplicates
+-    Client.requestCount.get() should be < ?:[Int]
++    Client.requestCount.get() should be < 16
+   }
+ }
+ 
+@@ -70,9 +68,9 @@ object K09_AsyncLookupDoFn {
+ 
+   class MyDoFn extends ScalaAsyncLookupDoFn[Int, String, Client](100, cacheSupplier) {
+ 
+-    override def asyncLookup(client: Client, input: Int): Future[String] = ???
++    override def asyncLookup(client: Client, input: Int): Future[String] = client.request(input)
+ 
+-    override def newClient(): Client = ???
++    override def newClient(): Client = new Client
+   }
+ 
+   class Client {
+diff --git a/src/test/scala/scio/koans/b4_approx/K00_BloomFilter1.scala b/src/test/scala/scio/koans/b4_approx/K00_BloomFilter1.scala
+index 16b0cfa..d7d9068 100644
+--- a/src/test/scala/scio/koans/b4_approx/K00_BloomFilter1.scala
++++ b/src/test/scala/scio/koans/b4_approx/K00_BloomFilter1.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Bloom Filter basics.
+  */
+ class K00_BloomFilter1 extends Koan {
+-  ImNotDone
+-
+   val positives: Seq[String] = (1 to 1000).map("positive-%05d".format(_))
+   val negatives: Seq[String] = (1 to 50).map("negative-%05d".format(_))
+ 
+@@ -26,10 +24,10 @@ class K00_BloomFilter1 extends Koan {
+     positives.forall(bf1.mightContain) shouldBe true
+ 
+     // Can it produce false positives?
+-    negatives.forall(bf1.mightContain) shouldBe ?:[Boolean]
++    negatives.forall(bf1.mightContain) shouldBe false
+ 
+     // What's the maximum false positives we expect given `fpp = 0.03`?
+-    val maxFp: Int = ???
++    val maxFp: Int = 30
+     negatives.count(bf1.mightContain) should be <= maxFp
+ 
+     // BF with higher capacity
+@@ -46,7 +44,7 @@ class K00_BloomFilter1 extends Koan {
+     // Number of bits = `-n * math.log(p) / (math.log(2) * math.log(2))`
+     // Where `n` is expected insertions and `p` is false positive probability
+     // Which BF needs the least and most space?
+-    Seq(size1, size2, size3).min shouldBe ?:[Int]
+-    Seq(size1, size2, size3).max shouldBe ?:[Int]
++    Seq(size1, size2, size3).min shouldBe size1
++    Seq(size1, size2, size3).max shouldBe size2
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala b/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
+index 4563f8d..f63fd99 100644
+--- a/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
++++ b/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
+@@ -9,8 +9,6 @@ import scio.koans.shared._
+  * Subtract a small collection from a larger one.
+  */
+ class K01_BloomFilter2 extends TransformKoan {
+-  ImNotDone
+-
+   type InT = (SCollection[String], SCollection[String])
+   type OutT = SCollection[String]
+ 
+@@ -44,7 +42,7 @@ class K01_BloomFilter2 extends TransformKoan {
+         .cross(bf)
+         .filter {
+           // Filter out items in RHS, i.e. `excludes`
+-          ???
++          case (s, bf) => !bf.mightContain(s)
+         }
+         .keys
+   }
+diff --git a/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala b/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala
+index eb8a507..f4e427b 100644
+--- a/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala
++++ b/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Compute approximate distinct count with HyperLogLog.
+  */
+ class K02_HyperLogLog extends TransformKoan {
+-  ImNotDone
+-
+   type InT = SCollection[String]
+   type OutT = SCollection[Long]
+ 
+@@ -43,8 +41,8 @@ class K02_HyperLogLog extends TransformKoan {
+     // `HyperLogLogAggregator` is of type `Aggregator[Array[Byte], HLL, HLL]`
+     val hll: Aggregator[String, HLL, Long] = HyperLogLogAggregator
+       .withError(0.02)
+-      .composePrepare((x: String) => ???)
+-      .andThenPresent((x: HLL) => ???)
++      .composePrepare((x: String) => x.getBytes)
++      .andThenPresent((x: HLL) => x.approximateSize.estimate)
+     input.aggregate(hll)
+   }
+ 
+diff --git a/src/test/scala/scio/koans/b4_approx/K03_CountMinSketch.scala b/src/test/scala/scio/koans/b4_approx/K03_CountMinSketch.scala
+index 7ef3cd2..bbf5cde 100644
+--- a/src/test/scala/scio/koans/b4_approx/K03_CountMinSketch.scala
++++ b/src/test/scala/scio/koans/b4_approx/K03_CountMinSketch.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Compute approximate frequency with CountMinSketch.
+  */
+ class K03_CountMinSketch extends TransformKoan {
+-  ImNotDone
+-
+   import K03_CountMinSketch._
+ 
+   type InT = SCollection[String]
+@@ -36,8 +34,8 @@ class K03_CountMinSketch extends TransformKoan {
+       .flatMap { cms =>
+         Seq(
+           ("a", cms.frequency("a").estimate),
+-          ???,
+-          ???
++          ("c", cms.frequency("c").estimate),
++          ("e", cms.frequency("e").estimate)
+         )
+       }
+   }
+diff --git a/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala b/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
+index a02517c..def313a 100644
+--- a/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
++++ b/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
+@@ -8,8 +8,6 @@ import scio.koans.shared._
+  * Compute approximate 25, 50 (median), and 75 percentile.
+  */
+ class K04_ApproxPercentile extends TransformKoan {
+-  ImNotDone
+-
+   import K04_ApproxPercentile._
+ 
+   type InT = SCollection[Int]
+@@ -45,8 +43,14 @@ class K04_ApproxPercentile extends TransformKoan {
+       Aggregator
+         .approximatePercentileBounds[Int](0.25)
+         .andThenPresent(b => Bound(b.lower.lower, b.upper.upper))
+-    val p50: Aggregator[Int, _, Bound] = ???
+-    val p75: Aggregator[Int, _, Bound] = ???
++    val p50: Aggregator[Int, _, Bound] =
++      Aggregator
++        .approximatePercentileBounds[Int](0.50)
++        .andThenPresent(b => Bound(b.lower.lower, b.upper.upper))
++    val p75: Aggregator[Int, _, Bound] =
++      Aggregator
++        .approximatePercentileBounds[Int](0.75)
++        .andThenPresent(b => Bound(b.lower.lower, b.upper.upper))
+     input.aggregate(MultiAggregator(p25, p50, p75))
+   }
+ }
