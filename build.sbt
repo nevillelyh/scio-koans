@@ -62,7 +62,7 @@ val commonSettings = Seq(
       throw new AlreadyHandledException(new RuntimeException)
     }
   },
-  verifyKoans := verifyKoans.dependsOn(allKoans).value,
+  verifyKoans := verifyKoans.dependsOn(allKoans).value
 )
 
 val jmhSettings = Seq(
@@ -80,14 +80,13 @@ val root: Project = Project(
   "scio-koans",
   file(".")
 ).settings(
-    commonSettings ++ jmhSettings,
-    libraryDependencies ++= Seq(
-      "com.spotify" %% "scio-core" % scioVersion,
-      "com.spotify" %% "scio-test" % scioVersion % Test,
-      "com.spotify" %% "magnolify-cats" % magnolifyVersion
-    )
+  commonSettings ++ jmhSettings,
+  libraryDependencies ++= Seq(
+    "com.spotify" %% "scio-core" % scioVersion,
+    "com.spotify" %% "scio-test" % scioVersion % Test,
+    "com.spotify" %% "magnolify-cats" % magnolifyVersion
   )
-  .enablePlugins(JmhPlugin)
+).enablePlugins(JmhPlugin)
 
 def getAllKoans(classLoader: ClassLoader, tests: Seq[TestDefinition]): Seq[(String, Boolean)] = {
   tests.iterator
