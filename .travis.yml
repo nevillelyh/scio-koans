@@ -1,8 +1,22 @@
 language: scala
-scala:
-  - 2.12.12
-jdk:
-  - openjdk8
+matrix:
+  include:
+    - name: test
+      scala: 2.12.12
+      jdk: openjdk8
+      script:
+        - git apply src/test/diff/solutions.diff
+        - sbt ++$TRAVIS_SCALA_VERSION clean test
+
+    - name: scalafmt
+      scala: 2.12.12
+      jdk: openjdk8
+      script: sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck
+
+    - name: verify
+      scala: 2.12.12
+      jdk: openjdk8
+      script: sbt ++$TRAVIS_SCALA_VERSION clean verifyKoans
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
@@ -15,10 +29,6 @@ cache:
     - $HOME/.cache/coursier
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot
-
-script:
-  - git apply src/test/diff/solutions.diff
-  - sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck test
 
 notifications:
   email:
