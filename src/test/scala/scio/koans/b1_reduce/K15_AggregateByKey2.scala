@@ -42,9 +42,11 @@ class K15_AggregateByKey2 extends TransformKoan {
   // Individual aggregators
   val countA = Aggregator.size
   val sumA = Aggregator.fromMonoid[Int]
-  val minA: Aggregator[Int, _, Int] = ???
-  val maxA: Aggregator[Int, _, Int] = ???
-  val distinctCountA: Aggregator[Int, _, Int] = ???
+
+  // Lazy so the test class can be instantiated
+  lazy val minA: Aggregator[Int, _, Int] = ???
+  lazy val maxA: Aggregator[Int, _, Int] = ???
+  lazy val distinctCountA: Aggregator[Int, _, Int] = ???
 
   test("v1") { input =>
     // Joining aggregators

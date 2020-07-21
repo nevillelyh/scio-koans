@@ -51,6 +51,6 @@ class K02_HyperLogLog extends TransformKoan {
   test("v3") {
     // `approximateUniqueCount` uses an exact set for up to 100 items
     // then HyperLogLog (HLL) with 13 bits, 8192 bytes, and 1.2% error
-    _.aggregate(Aggregator.approximateUniqueCount)
+    _.aggregate(Aggregator.approximateUniqueCount[String])
   }
 }
