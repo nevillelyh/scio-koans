@@ -68,8 +68,8 @@ class K06_SideInput2 extends TransformKoan {
         .join(i2e)
         .values
         .map {
-          case (a, en) =>
-            (en, a)
+          case (k, en) =>
+            (en, k)
         }
         .join(e2s)
         .values
