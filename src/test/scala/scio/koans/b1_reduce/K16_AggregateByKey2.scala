@@ -7,10 +7,10 @@ import scio.koans.shared._
 /**
  * Replace `foldByKey` with `aggregateByKey`.
  */
-class K15_AggregateByKey2 extends TransformKoan {
+class K16_AggregateByKey2 extends TransformKoan {
   ImNotDone
 
-  import K15_AggregateByKey2._
+  import K16_AggregateByKey2._
 
   type InT = SCollection[(String, Int)]
   type OutT = SCollection[(String, Stats)]
@@ -76,6 +76,6 @@ class K15_AggregateByKey2 extends TransformKoan {
   }
 }
 
-object K15_AggregateByKey2 {
+object K16_AggregateByKey2 {
   case class Stats(count: Long, sum: Int, min: Int, max: Int, distinctCount: Int)
 }

@@ -6,7 +6,7 @@ import scio.koans.shared._
 /**
  * More aggregators.
  */
-class K19_MoreAggregators2 extends Koan {
+class K20_MoreAggregators2 extends Koan {
   ImNotDone
 
   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =

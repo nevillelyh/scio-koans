@@ -909,20 +909,50 @@ index e2e3bf5..722add7 100644
      val distinctCount = input
        .aggregateByKey(Set.empty[Int])(seqOp, combOp)
        .mapValues(_.size)
-diff --git a/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala b/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
-index adfcf6c..75ea865 100644
---- a/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K13_Aggregator.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala b/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
+index 57c9e16..217e7a6 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
+@@ -36,20 +36,20 @@ class K13_MutableFoldCombineAggregate extends TransformKoan {
+ 
+   test("foldByKey") { input =>
+     // Hint: mutate LHS instead of creating a new collection
+-    def op(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = ???
++    def op(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = x ++= y
+     input.mapValues(mutable.Set(_)).foldByKey(mutable.Set.empty)(op).mapValues(_.size)
+   }
+ 
+   test("combineByKey") { input =>
+     def createCombiner(x: Int): mutable.Set[Int] = mutable.Set(x)
+-    def mergeValue(c: mutable.Set[Int], x: Int): mutable.Set[Int] = ???
+-    def mergeCombiners(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = ???
++    def mergeValue(c: mutable.Set[Int], x: Int): mutable.Set[Int] = c += x
++    def mergeCombiners(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = x ++= y
+     input.combineByKey(createCombiner)(mergeValue)(mergeCombiners).mapValues(_.size)
+   }
+ 
+   test("aggregateByKey") { input =>
+-    def seqOp(accum: mutable.Set[Int], v: Int): mutable.Set[Int] = ???
+-    def combOp(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = ???
++    def seqOp(accum: mutable.Set[Int], v: Int): mutable.Set[Int] = accum += v
++    def combOp(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = x ++= y
+     input.aggregateByKey(mutable.Set.empty[Int])(seqOp, combOp).mapValues(_.size)
+   }
+ }
+diff --git a/src/test/scala/scio/koans/b1_reduce/K14_Aggregator.scala b/src/test/scala/scio/koans/b1_reduce/K14_Aggregator.scala
+index c6597c6..b95c04c 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K14_Aggregator.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K14_Aggregator.scala
 @@ -6,8 +6,6 @@ import scio.koans.shared._
   * Abstract reduce binary operations with `Aggregator`s.
   */
- class K13_Aggregator extends Koan {
+ class K14_Aggregator extends Koan {
 -  ImNotDone
 -
-   import K13_Aggregator._
+   import K14_Aggregator._
  
    def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
-@@ -24,13 +22,13 @@ class K13_Aggregator extends Koan {
+@@ -24,13 +22,13 @@ class K14_Aggregator extends Koan {
    "Max aggregator" should "work" in {
      case class Max(v: Int)
      implicit val maxSg: Semigroup[Max] = (x, y) => Max(math.max(x.v, y.v))
@@ -938,20 +968,20 @@ index adfcf6c..75ea865 100644
      testAggregator(Seq(1, 1, 1, 2, 2, 3), 3)(aggregator)
    }
  }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
-index 30d39c2..8e2e9fa 100644
---- a/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K14_AggregateByKey1.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
+index d44d3a6..22aff18 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
   * Replace `foldByKey` with `aggregateByKey`.
   */
- class K14_AggregateByKey1 extends TransformKoan {
+ class K15_AggregateByKey1 extends TransformKoan {
 -  ImNotDone
 -
    type InT = SCollection[(String, Int)]
    type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
  
-@@ -50,10 +48,10 @@ class K14_AggregateByKey1 extends TransformKoan {
+@@ -50,10 +48,10 @@ class K15_AggregateByKey1 extends TransformKoan {
  
      // FIXME: implement these with `aggregateByKey`
      // Hint: Algebird also provides `MaxAggregator`.
@@ -964,20 +994,20 @@ index 30d39c2..8e2e9fa 100644
  
      (min, max, distinctCount)
    }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
-index 38320a2..631e4bc 100644
---- a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey2.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
+index 9c50b04..5c47042 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
   * Replace `foldByKey` with `aggregateByKey`.
   */
- class K15_AggregateByKey2 extends TransformKoan {
+ class K16_AggregateByKey2 extends TransformKoan {
 -  ImNotDone
 -
-   import K15_AggregateByKey2._
+   import K16_AggregateByKey2._
  
    type InT = SCollection[(String, Int)]
-@@ -44,9 +42,9 @@ class K15_AggregateByKey2 extends TransformKoan {
+@@ -44,9 +42,9 @@ class K16_AggregateByKey2 extends TransformKoan {
    val sumA = Aggregator.fromMonoid[Int]
  
    // Lazy so the test class can be instantiated
@@ -990,7 +1020,7 @@ index 38320a2..631e4bc 100644
  
    test("v1") { input =>
      // Joining aggregators
-@@ -59,7 +57,7 @@ class K15_AggregateByKey2 extends TransformKoan {
+@@ -59,7 +57,7 @@ class K16_AggregateByKey2 extends TransformKoan {
          .andThenPresent {
            case ((((count, sum), min), max), distinctCount) =>
              // FIXME: present results as `Stats`
@@ -999,7 +1029,7 @@ index 38320a2..631e4bc 100644
          }
      input.aggregateByKey(multiAggregator)
    }
-@@ -70,7 +68,7 @@ class K15_AggregateByKey2 extends TransformKoan {
+@@ -70,7 +68,7 @@ class K16_AggregateByKey2 extends TransformKoan {
        MultiAggregator(countA, sumA, minA, maxA, distinctCountA)
          .andThenPresent { c =>
            // FIXME: present `c` as `Stats`
@@ -1008,20 +1038,20 @@ index 38320a2..631e4bc 100644
          }
      input.aggregateByKey(multiAggregator)
    }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala b/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
-index ab655a5..c5dbbe4 100644
---- a/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K16_Moments1.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala b/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
+index 30f9638..000141a 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
   * Compute count, mean, variance and standard deviation with Moments.
   */
- class K16_Moments1 extends TransformKoan {
+ class K17_Moments1 extends TransformKoan {
 -  ImNotDone
 -
-   import K16_Moments1._
+   import K17_Moments1._
  
    type InT = SCollection[Int]
-@@ -60,15 +58,15 @@ class K16_Moments1 extends TransformKoan {
+@@ -60,15 +58,15 @@ class K17_Moments1 extends TransformKoan {
    test("v1") {
      // `Moments` can compute mean, count, variance, standard deviation, etc. in parallel.
      _.map(x => Moments(x)).sum // Algebird provides implicit `Semigroup[Moments]`
@@ -1040,20 +1070,20 @@ index ab655a5..c5dbbe4 100644
      input.aggregate(aggregator)
    }
  }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala b/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
-index 069714b..cc3cf7b 100644
---- a/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K17_Moments2.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala b/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
+index dedee0a..48f41cd 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
   * Compute min, max, sum, count, mean, variance and standard deviation with Moments.
   */
- class K17_Moments2 extends TransformKoan {
+ class K18_Moments2 extends TransformKoan {
 -  ImNotDone
 -
-   import K17_Moments2._
+   import K18_Moments2._
  
    type InT = SCollection[Int]
-@@ -69,7 +67,7 @@ class K17_Moments2 extends TransformKoan {
+@@ -69,7 +67,7 @@ class K18_Moments2 extends TransformKoan {
      _.map(x => (Min(x), Max(x), x, Moments(x))).sum
        .map {
          case (min, max, sum, m) =>
@@ -1062,7 +1092,7 @@ index 069714b..cc3cf7b 100644
        }
    }
  
-@@ -77,10 +75,16 @@ class K17_Moments2 extends TransformKoan {
+@@ -77,10 +75,16 @@ class K18_Moments2 extends TransformKoan {
      val min = Aggregator.min[Int]
      val max = Aggregator.max[Int]
      val sum = Aggregator.fromMonoid[Int]
@@ -1081,14 +1111,14 @@ index 069714b..cc3cf7b 100644
  
      input.aggregate(multiAggregator)
    }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala b/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
-index b4b6499..7151a61 100644
---- a/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K18_MoreAggregators1.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators1.scala b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators1.scala
+index 1ecb416..08a96a0 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators1.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators1.scala
 @@ -7,35 +7,33 @@ import scio.koans.shared._
   * More aggregators.
   */
- class K18_MoreAggregators1 extends Koan {
+ class K19_MoreAggregators1 extends Koan {
 -  ImNotDone
 -
    def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
@@ -1127,20 +1157,20 @@ index b4b6499..7151a61 100644
 +    testAggregator(Seq("a", "b", "c"), "c")(Aggregator.max)
    }
  }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
-index dcbfb13..2b38181 100644
---- a/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K19_MoreAggregators2.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators2.scala b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators2.scala
+index ef0993d..368a5f2 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators2.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators2.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
   * More aggregators.
   */
- class K19_MoreAggregators2 extends Koan {
+ class K20_MoreAggregators2 extends Koan {
 -  ImNotDone
 -
    def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
      aggregator(xs) shouldBe expected
  
-@@ -19,18 +17,18 @@ class K19_MoreAggregators2 extends Koan {
+@@ -19,18 +17,18 @@ class K20_MoreAggregators2 extends Koan {
        ("c", 1)
      )
      testAggregator(xs, ("a", 2))(Aggregator.minBy(_._1))
@@ -1165,20 +1195,20 @@ index dcbfb13..2b38181 100644
 +    testAggregator(1 to 99 by 2, true)(Aggregator.forall(_ % 2 == 1))
    }
  }
-diff --git a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
-index cc11416..7c77963 100644
---- a/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
-+++ b/src/test/scala/scio/koans/b1_reduce/K20_MoreAggregators3.scala
+diff --git a/src/test/scala/scio/koans/b1_reduce/K21_MoreAggregators3.scala b/src/test/scala/scio/koans/b1_reduce/K21_MoreAggregators3.scala
+index c245126..58b3b9c 100644
+--- a/src/test/scala/scio/koans/b1_reduce/K21_MoreAggregators3.scala
++++ b/src/test/scala/scio/koans/b1_reduce/K21_MoreAggregators3.scala
 @@ -9,8 +9,6 @@ import scala.util.Random
   * More aggregators.
   */
- class K20_MoreAggregators3 extends Koan {
+ class K21_MoreAggregators3 extends Koan {
 -  ImNotDone
 -
    def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
      aggregator(xs) shouldBe expected
  
-@@ -18,15 +16,15 @@ class K20_MoreAggregators3 extends Koan {
+@@ -18,15 +16,15 @@ class K21_MoreAggregators3 extends Koan {
      // Fixed seed so that `sample.size` is deterministic
      val aggregator = Aggregator.randomSample[Int](0.1, seed = 1234)
      val sample = aggregator(1 to 100)
@@ -1197,7 +1227,7 @@ index cc11416..7c77963 100644
    }
  
    it should "support sorted{Reverse}Take" in {
-@@ -34,8 +32,8 @@ class K20_MoreAggregators3 extends Koan {
+@@ -34,8 +32,8 @@ class K21_MoreAggregators3 extends Koan {
  
      testAggregator(xs, Seq(1, 2, 3, 4, 5))(Aggregator.sortedTake(5))
      testAggregator(xs, Seq(100, 99, 98, 97, 96))(Aggregator.sortedReverseTake(5))
@@ -1208,7 +1238,7 @@ index cc11416..7c77963 100644
    }
  
    it should "support sortBy{Reverse}Take" in {
-@@ -49,10 +47,11 @@ class K20_MoreAggregators3 extends Koan {
+@@ -49,10 +47,11 @@ class K21_MoreAggregators3 extends Koan {
        Seq("key-100" -> 100, "key-99" -> 99, "key-98" -> 98, "key-97" -> 97, "key-96" -> 96)
      testAggregator(xs, expected2)(Aggregator.sortByReverseTake(5)(_._2))
  

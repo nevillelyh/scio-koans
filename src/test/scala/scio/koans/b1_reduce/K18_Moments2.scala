@@ -7,10 +7,10 @@ import scio.koans.shared._
 /**
  * Compute min, max, sum, count, mean, variance and standard deviation with Moments.
  */
-class K17_Moments2 extends TransformKoan {
+class K18_Moments2 extends TransformKoan {
   ImNotDone
 
-  import K17_Moments2._
+  import K18_Moments2._
 
   type InT = SCollection[Int]
   type OutT = SCollection[Stats]
@@ -86,7 +86,7 @@ class K17_Moments2 extends TransformKoan {
   }
 }
 
-object K17_Moments2 {
+object K18_Moments2 {
   val input: Seq[Int] = 1 to 100
 
   val expected: Stats = {

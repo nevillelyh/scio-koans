@@ -8,7 +8,7 @@ import scala.util.Random
 /**
  * More aggregators.
  */
-class K20_MoreAggregators3 extends Koan {
+class K21_MoreAggregators3 extends Koan {
   ImNotDone
 
   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =

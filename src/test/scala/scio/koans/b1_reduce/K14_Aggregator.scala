@@ -5,10 +5,10 @@ import scio.koans.shared._
 /**
  * Abstract reduce binary operations with `Aggregator`s.
  */
-class K13_Aggregator extends Koan {
+class K14_Aggregator extends Koan {
   ImNotDone
 
-  import K13_Aggregator._
+  import K14_Aggregator._
 
   def testAggregator[A, B, C](xs: Seq[A], expected: C)(aggregator: Aggregator[A, B, C]): Unit =
     aggregator(xs) shouldBe expected
@@ -35,7 +35,7 @@ class K13_Aggregator extends Koan {
   }
 }
 
-object K13_Aggregator {
+object K14_Aggregator {
   trait Semigroup[T] {
     def combine(x: T, y: T): T
     def combineAllOption(xs: TraversableOnce[T]): Option[T] = xs.reduceOption(combine)

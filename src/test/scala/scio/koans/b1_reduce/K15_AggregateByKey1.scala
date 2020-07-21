@@ -7,7 +7,7 @@ import scio.koans.shared._
 /**
  * Replace `foldByKey` with `aggregateByKey`.
  */
-class K14_AggregateByKey1 extends TransformKoan {
+class K15_AggregateByKey1 extends TransformKoan {
   ImNotDone
 
   type InT = SCollection[(String, Int)]
