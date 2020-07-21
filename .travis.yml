@@ -1,8 +1,8 @@
 language: scala
-matrix:
-  include:
-    - scala: 2.12.11
-      jdk: openjdk8
+scala:
+  - 2.12.12
+jdk:
+  - openjdk8
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
@@ -17,7 +17,8 @@ cache:
     - $HOME/.sbt/boot
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck test:compile
+  - git apply src/test/diff/solutions.diff
+  - sbt ++$TRAVIS_SCALA_VERSION clean scalafmtSbtCheck scalafmtCheck test:scalafmtCheck test
 
 notifications:
   email:
