@@ -64,6 +64,9 @@ class K03_FullOuterJoin extends TransformKoan {
       lhs.cogroup(rhs).flatMapValues {
         case (lv, rv) =>
           // Produce a `None` if either `lv` or `rv` is empty
+          // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
+          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
+            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
           ???
       }
   }
