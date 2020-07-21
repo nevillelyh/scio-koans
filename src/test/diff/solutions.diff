@@ -1701,7 +1701,7 @@ index 71997ff..2d96989 100644
  
    class Client {
 diff --git a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
-index 189a2b9..b27f13f 100644
+index 2114da8..07983bd 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
 @@ -15,8 +15,6 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
@@ -1724,8 +1724,8 @@ index 189a2b9..b27f13f 100644
      }
  
      // Hint: there are 16 input elements with some duplicates
--    Client.requestCount.get() should be < ?:[Int]
-+    Client.requestCount.get() should be < 16
+-    Client.requestCount.get() should be <= ?:[Int]
++    Client.requestCount.get() should be <= 16
    }
  }
  

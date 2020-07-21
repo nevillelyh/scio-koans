@@ -54,7 +54,7 @@ class K09_AsyncLookupDoFn extends PipelineKoan {
     }
 
     // Hint: there are 16 input elements with some duplicates
-    Client.requestCount.get() should be < ?:[Int]
+    Client.requestCount.get() should be <= ?:[Int]
   }
 }
 
