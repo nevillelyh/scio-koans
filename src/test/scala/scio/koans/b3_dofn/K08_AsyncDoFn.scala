@@ -29,7 +29,7 @@ class K08_AsyncDoFn extends PipelineKoan {
     }
 
     // We should reuse a single client instance
-    Client.count.get() shouldBe 1
+    Client.instanceCount.get() shouldBe 1
   }
 }
 
@@ -43,7 +43,7 @@ object K08_AsyncDoFn {
   }
 
   class Client {
-    Client.count.incrementAndGet()
+    Client.instanceCount.incrementAndGet()
 
     implicit val es: ExecutionContextExecutorService =
       ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(8))
@@ -56,6 +56,6 @@ object K08_AsyncDoFn {
   }
 
   object Client {
-    val count: AtomicInteger = new AtomicInteger(0)
+    val instanceCount: AtomicInteger = new AtomicInteger(0)
   }
 }

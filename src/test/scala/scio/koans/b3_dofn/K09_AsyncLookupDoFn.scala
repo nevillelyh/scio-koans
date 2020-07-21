@@ -54,7 +54,7 @@ class K09_AsyncLookupDoFn extends PipelineKoan {
     }
 
     // Hint: there are 16 input elements with some duplicates
-    Client.counter.get() should be < ?:[Int]
+    Client.requestCount.get() should be < ?:[Int]
   }
 }
 
@@ -82,13 +82,13 @@ object K09_AsyncLookupDoFn {
     // Process a request asynchronously
     def request(input: Int): Future[String] = Future {
       Thread.sleep(100)
-      Client.counter.incrementAndGet()
+      Client.requestCount.incrementAndGet()
       Client.map(input)
     }
   }
 
   object Client {
-    val counter: AtomicInteger = new AtomicInteger(0)
+    val requestCount: AtomicInteger = new AtomicInteger(0)
 
     val map: Map[Int, String] = Map(1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five")
   }
