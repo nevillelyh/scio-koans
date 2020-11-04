@@ -1,7 +1,7 @@
 scio-koans
 ==========
 
-[![Build Status](https://travis-ci.org/nevillelyh/scio-koans.svg?branch=master)](https://travis-ci.org/nevillelyh/scio-koans)
+[![Build Status](https://img.shields.io/github/workflow/status/nevillelyh/scio-koans/CI)](https://github.com/nevillelyh/scio-koans/actions?query=workflow%3ACI)
 [![GitHub license](https://img.shields.io/github/license/nevillelyh/scio-koans.svg)](./LICENSE)
 
 A collection of [Scio](https://github.com/spotify/scio) exercises inspired by [Ruby Koans](http://rubykoans.com/) and many others.
