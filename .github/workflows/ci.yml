@@ -5,11 +5,11 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v2
       - name: Cache sbt
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: Java 8 setup
-        uses: olafurpg/setup-scala@v7
+        uses: olafurpg/setup-scala@v10
         with:
           java-version: 8
       - run: sbt scalafmtCheckAll scalafmtSbtCheck
@@ -17,11 +17,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v2
       - name: Cache sbt
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: Java 8 setup
-        uses: olafurpg/setup-scala@v7
+        uses: olafurpg/setup-scala@v10
         with:
           java-version: 8
       - run: |
@@ -31,11 +31,11 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.1.0
+      - uses: actions/checkout@v2
       - name: Cache sbt
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: Java 8 setup
-        uses: olafurpg/setup-scala@v7
+        uses: olafurpg/setup-scala@v10
         with:
           java-version: 8
       - run: sbt verifyKoans
