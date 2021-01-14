@@ -16,9 +16,8 @@ class K08_InvertMap extends JmhKoan {
 
   @Benchmark def baseline: Map[Int, Set[String]] =
     map.toList
-      .flatMap {
-        case (k, v) =>
-          v.map(g => (g, k))
+      .flatMap { case (k, v) =>
+        v.map(g => (g, k))
       }
       .groupBy(_._1)
       .mapValues(_.map(_._2).toSet)

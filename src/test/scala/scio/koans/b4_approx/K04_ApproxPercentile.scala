@@ -20,9 +20,8 @@ class K04_ApproxPercentile extends TransformKoan {
   }
 
   verify {
-    _ should satisfySingleValue[(Bound, Bound, Bound)] {
-      case (p25, p50, p75) =>
-        p25.contains(25) && p50.contains(50) && p75.contains(75)
+    _ should satisfySingleValue[(Bound, Bound, Bound)] { case (p25, p50, p75) =>
+      p25.contains(25) && p50.contains(50) && p75.contains(75)
     }
   }
 
