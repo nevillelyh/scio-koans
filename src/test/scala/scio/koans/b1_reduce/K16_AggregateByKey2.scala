@@ -56,10 +56,9 @@ class K16_AggregateByKey2 extends TransformKoan {
         .join(minA)
         .join(maxA)
         .join(distinctCountA)
-        .andThenPresent {
-          case ((((count, sum), min), max), distinctCount) =>
-            // FIXME: present results as `Stats`
-            ???
+        .andThenPresent { case ((((count, sum), min), max), distinctCount) =>
+          // FIXME: present results as `Stats`
+          ???
         }
     input.aggregateByKey(multiAggregator)
   }

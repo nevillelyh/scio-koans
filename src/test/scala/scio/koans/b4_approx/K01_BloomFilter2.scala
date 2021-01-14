@@ -28,25 +28,23 @@ class K01_BloomFilter2 extends TransformKoan {
     }
   }
 
-  baseline {
-    case (includes, excludes) =>
-      includes
-        .keyBy(identity)
-        .leftOuterJoin(excludes.keyBy(identity))
-        .filter(_._2._2.isEmpty)
-        .keys
+  baseline { case (includes, excludes) =>
+    includes
+      .keyBy(identity)
+      .leftOuterJoin(excludes.keyBy(identity))
+      .filter(_._2._2.isEmpty)
+      .keys
   }
 
-  test("v1") {
-    case (includes, excludes) =>
-      val bf = excludes.asApproxFilter(BloomFilter, 110, 0.03)
-      includes
-        .cross(bf)
-        .filter {
-          // Filter out items in RHS, i.e. `excludes`
-          ???
-        }
-        .keys
+  test("v1") { case (includes, excludes) =>
+    val bf = excludes.asApproxFilter(BloomFilter, 110, 0.03)
+    includes
+      .cross(bf)
+      .filter {
+        // Filter out items in RHS, i.e. `excludes`
+        ???
+      }
+      .keys
   }
 }
 

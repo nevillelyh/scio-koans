@@ -53,21 +53,18 @@ class K03_FullOuterJoin extends TransformKoan {
   prepare(sc => (sc.parallelize(lhs), sc.parallelize(rhs)))
   verify(_ should containInAnyOrder(expected))
 
-  baseline {
-    case (lhs, rhs) =>
-      // Join is a special case of `cogroup`
-      lhs.fullOuterJoin(rhs)
+  baseline { case (lhs, rhs) =>
+    // Join is a special case of `cogroup`
+    lhs.fullOuterJoin(rhs)
   }
 
-  test("v1") {
-    case (lhs, rhs) =>
-      lhs.cogroup(rhs).flatMapValues {
-        case (lv, rv) =>
-          // Produce a `None` if either `lv` or `rv` is empty
-          // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
-          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
-            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
-          ???
-      }
+  test("v1") { case (lhs, rhs) =>
+    lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+      // Produce a `None` if either `lv` or `rv` is empty
+      // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
+      def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
+        if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
+      ???
+    }
   }
 }

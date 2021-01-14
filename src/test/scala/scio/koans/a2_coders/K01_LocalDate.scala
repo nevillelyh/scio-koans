@@ -34,15 +34,14 @@ class K01_LocalDate extends PipelineKoan {
 
       val output = sc
         .parallelize(events)
-        .map {
-          case (dateStr, event) =>
-            // Hint: avoid null by emitting something else in case of exception
-            try {
-              val date = LocalDate.from(formatter.parse(dateStr))
-              ((date.getYear, date.getMonth.getValue), event)
-            } catch {
-              case _: Throwable => (null, event)
-            }
+        .map { case (dateStr, event) =>
+          // Hint: avoid null by emitting something else in case of exception
+          try {
+            val date = LocalDate.from(formatter.parse(dateStr))
+            ((date.getYear, date.getMonth.getValue), event)
+          } catch {
+            case _: Throwable => (null, event)
+          }
         }
         .groupByKey
         .mapValues(_.toSet)

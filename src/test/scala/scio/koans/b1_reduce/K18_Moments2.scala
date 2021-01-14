@@ -43,19 +43,17 @@ class K18_Moments2 extends TransformKoan {
     val sumCountMean = input
       .map(x => (x, 1L))
       .sum
-      .map {
-        case (sum, count) =>
-          (sum, count, sum.toDouble / count)
+      .map { case (sum, count) =>
+        (sum, count, sum.toDouble / count)
       }
     val varianceAndStddev = input
       .cross(sumCountMean.map(_._3))
       .map { case (x, mean) => (math.pow(x - mean, 2), 1L) }
       .sum
-      .map {
-        case (sqSum, count) =>
-          val variance = sqSum / count
-          val stddev = math.sqrt(variance)
-          (variance, stddev)
+      .map { case (sqSum, count) =>
+        val variance = sqSum / count
+        val stddev = math.sqrt(variance)
+        (variance, stddev)
       }
 
     // Each cross creates a nested tuple, a little cryptic
@@ -67,9 +65,8 @@ class K18_Moments2 extends TransformKoan {
 
   test("v1") {
     _.map(x => (Min(x), Max(x), x, Moments(x))).sum
-      .map {
-        case (min, max, sum, m) =>
-          ?:[Stats]
+      .map { case (min, max, sum, m) =>
+        ?:[Stats]
       }
   }
 

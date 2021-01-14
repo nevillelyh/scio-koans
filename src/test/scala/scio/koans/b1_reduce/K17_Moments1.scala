@@ -37,23 +37,20 @@ class K17_Moments1 extends TransformKoan {
     val countAndMean = input
       .map(x => (1L, x))
       .sum
-      .map {
-        case (count, sum) =>
-          (count, sum.toDouble / count)
+      .map { case (count, sum) =>
+        (count, sum.toDouble / count)
       }
     val varianceAndStddev = input
       .cross(countAndMean.values)
       .map { case (x, mean) => (math.pow(x - mean, 2), 1L) }
       .sum
-      .map {
-        case (sqSum, count) =>
-          val variance = sqSum / count
-          val stddev = math.sqrt(variance)
-          (variance, stddev)
+      .map { case (sqSum, count) =>
+        val variance = sqSum / count
+        val stddev = math.sqrt(variance)
+        (variance, stddev)
       }
-    countAndMean.cross(varianceAndStddev).map {
-      case ((count, mean), (variance, stddev)) =>
-        Stats(count, mean, variance, stddev)
+    countAndMean.cross(varianceAndStddev).map { case ((count, mean), (variance, stddev)) =>
+      Stats(count, mean, variance, stddev)
     }
   }
 

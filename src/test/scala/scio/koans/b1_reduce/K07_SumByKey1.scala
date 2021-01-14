@@ -29,11 +29,10 @@ class K07_SumByKey1 extends TransformKoan {
   val expectedDistinctCount: Seq[(String, Int)] = Seq(("a", 3), ("b", 2), ("c", 1))
 
   prepare(_.parallelize(input))
-  verify {
-    case (min, max, distinctCount) =>
-      min should containInAnyOrder(expectedMin)
-      max should containInAnyOrder(expectedMax)
-      distinctCount should containInAnyOrder(expectedDistinctCount)
+  verify { case (min, max, distinctCount) =>
+    min should containInAnyOrder(expectedMin)
+    max should containInAnyOrder(expectedMax)
+    distinctCount should containInAnyOrder(expectedDistinctCount)
   }
 
   baseline { input =>

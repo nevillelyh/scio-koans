@@ -60,47 +60,41 @@ class K06_SideInput2 extends TransformKoan {
   prepare(sc => (sc.parallelize(lhs), sc.parallelize(i2e), sc.parallelize(e2s)))
   verify(_ should containInAnyOrder(expected))
 
-  baseline {
-    case (lhs, i2e, e2s) =>
-      // 2 shuffles from 2 `join`s
-      lhs
-        .map { case (k, v) => (v, k) }
-        .join(i2e)
-        .values
-        .map {
-          case (k, en) =>
-            (en, k)
-        }
-        .join(e2s)
-        .values
+  baseline { case (lhs, i2e, e2s) =>
+    // 2 shuffles from 2 `join`s
+    lhs
+      .map { case (k, v) => (v, k) }
+      .join(i2e)
+      .values
+      .map { case (k, en) =>
+        (en, k)
+      }
+      .join(e2s)
+      .values
   }
 
-  test("v1") {
-    case (lhs, i2e, e2s) =>
-      // 2 `SideInput`s, integer to English and English to Spanish
-      val sideInt2En: SideInput[Map[Int, String]] = ???
-      val sideEn2Es: SideInput[Map[String, String]] = ???
-      lhs
-        .withSideInputs(sideInt2En, sideEn2Es)
-        .map {
-          case ((k, v), ctx) =>
-            // Map values to Spanish
-            ?:[(String, String)]
-        }
-        .toSCollection
+  test("v1") { case (lhs, i2e, e2s) =>
+    // 2 `SideInput`s, integer to English and English to Spanish
+    val sideInt2En: SideInput[Map[Int, String]] = ???
+    val sideEn2Es: SideInput[Map[String, String]] = ???
+    lhs
+      .withSideInputs(sideInt2En, sideEn2Es)
+      .map { case ((k, v), ctx) =>
+        // Map values to Spanish
+        ?:[(String, String)]
+      }
+      .toSCollection
   }
 
-  test("v2") {
-    case (lhs, i2e, e2s) =>
-      // Build a single `SideInput` of integer to Spanish to reduce map lookup cost later
-      val sideInt2Es: SideInput[Map[Int, String]] = ???
-      lhs
-        .withSideInputs(sideInt2Es)
-        .map {
-          case ((k, v), ctx) =>
-            // Map values to Spanish
-            ?:[(String, String)]
-        }
-        .toSCollection
+  test("v2") { case (lhs, i2e, e2s) =>
+    // Build a single `SideInput` of integer to Spanish to reduce map lookup cost later
+    val sideInt2Es: SideInput[Map[Int, String]] = ???
+    lhs
+      .withSideInputs(sideInt2Es)
+      .map { case ((k, v), ctx) =>
+        // Map values to Spanish
+        ?:[(String, String)]
+      }
+      .toSCollection
   }
 }

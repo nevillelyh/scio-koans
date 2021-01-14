@@ -50,19 +50,16 @@ class K00_CoGroup extends TransformKoan {
   prepare(sc => (sc.parallelize(lhs), sc.parallelize(rhs)))
   verify(_ should containInAnyOrder(expected))
 
-  baseline {
-    case (lhs, rhs) =>
-      // Join is a special case of `cogroup`
-      lhs.join(rhs)
+  baseline { case (lhs, rhs) =>
+    // Join is a special case of `cogroup`
+    lhs.join(rhs)
   }
 
-  test("v1") {
-    case (lhs, rhs) =>
-      lhs.cogroup(rhs).flatMapValues {
-        case (lv, rv) =>
-          // Implement Cartesian product of LHS * RHS values
-          /** Hint: remember [[scio.koans.a1_collections.K09_ForYield]]? */
-          ???
-      }
+  test("v1") { case (lhs, rhs) =>
+    lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+      // Implement Cartesian product of LHS * RHS values
+      /** Hint: remember [[scio.koans.a1_collections.K09_ForYield]]? */
+      ???
+    }
   }
 }

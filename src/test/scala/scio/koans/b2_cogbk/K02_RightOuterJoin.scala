@@ -52,17 +52,14 @@ class K02_RightOuterJoin extends TransformKoan {
   prepare(sc => (sc.parallelize(lhs), sc.parallelize(rhs)))
   verify(_ should containInAnyOrder(expected))
 
-  baseline {
-    case (lhs, rhs) =>
-      lhs.rightOuterJoin(rhs)
+  baseline { case (lhs, rhs) =>
+    lhs.rightOuterJoin(rhs)
   }
 
-  test("v1") {
-    case (lhs, rhs) =>
-      lhs.cogroup(rhs).flatMapValues {
-        case (lv, rv) =>
-          // Hint: produce a single `None` if `lv` is empty
-          ???
-      }
+  test("v1") { case (lhs, rhs) =>
+    lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+      // Hint: produce a single `None` if `lv` is empty
+      ???
+    }
   }
 }
