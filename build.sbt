@@ -1,9 +1,9 @@
 name := "scio-koans"
 description := "Scio Koans"
 
-val scioVersion = "0.9.2"
-val magnolifyVersion = "0.2.2"
-val scalaTestVersion = "3.2.0"
+val scioVersion = "0.10.0-beta2"
+val magnolifyVersion = "0.3.0"
+val scalaTestVersion = "3.2.3"
 
 val allKoans = taskKey[Seq[(String, Boolean)]]("Show all Koans")
 val nextKoan = taskKey[Unit]("Run next Koan")
@@ -15,8 +15,8 @@ val Red = Some(scala.Console.RED)
 
 val commonSettings = Seq(
   organization := "me.lyh",
-  scalaVersion := "2.12.12",
-  crossScalaVersions := Seq("2.12.12"),
+  scalaVersion := "2.12.13",
+  crossScalaVersions := Seq("2.12.13"),
   scalacOptions ++= Seq(
     "-target:jvm-1.8",
     "-deprecation",
