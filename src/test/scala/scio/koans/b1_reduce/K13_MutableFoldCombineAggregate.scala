@@ -37,7 +37,7 @@ class K13_MutableFoldCombineAggregate extends TransformKoan {
   test("foldByKey") { input =>
     // Hint: mutate LHS instead of creating a new collection
     def op(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = ???
-    input.mapValues(mutable.Set(_)).foldByKey(mutable.Set.empty)(op).mapValues(_.size)
+    input.mapValues(mutable.Set(_)).foldByKey(mutable.Set.empty[Int])(op).mapValues(_.size)
   }
 
   test("combineByKey") { input =>
