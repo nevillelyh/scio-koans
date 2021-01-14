@@ -202,7 +202,7 @@ index a283915..eaff29a 100644
      sum
    }
 diff --git a/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala b/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
-index ac195ab..b27b368 100644
+index e64755d..fab5089 100644
 --- a/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
 +++ b/src/test/scala/scio/koans/a1_collections/K08_InvertMap.scala
 @@ -9,8 +9,6 @@ import scala.collection.mutable
@@ -214,7 +214,7 @@ index ac195ab..b27b368 100644
    val map: Map[String, Set[Int]] =
      Map("a" -> Set(1, 2, 3), "b" -> Set(2, 3, 4), "c" -> Set(4, 5, 6))
  
-@@ -25,7 +23,11 @@ class K08_InvertMap extends JmhKoan {
+@@ -24,7 +22,11 @@ class K08_InvertMap extends JmhKoan {
  
    @Benchmark def v1: mutable.Map[Int, Set[String]] = {
      val m = mutable.Map.empty[Int, Set[String]].withDefaultValue(Set.empty)
@@ -273,7 +273,7 @@ index 11b112c..19ce58a 100644
  
    @Benchmark def generic: mutable.WrappedArray[Byte] =
 diff --git a/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala b/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
-index 4dfd984..71afd99 100644
+index 86df69a..095781b 100644
 --- a/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
 +++ b/src/test/scala/scio/koans/a2_coders/K01_LocalDate.scala
 @@ -9,8 +9,6 @@ import scio.koans.shared._
@@ -302,16 +302,16 @@ index 4dfd984..71afd99 100644
    )
  
    "Snippet" should "work" in {
-@@ -39,9 +37,9 @@ class K01_LocalDate extends PipelineKoan {
-             // Hint: avoid null by emitting something else in case of exception
-             try {
-               val date = LocalDate.from(formatter.parse(dateStr))
--              ((date.getYear, date.getMonth.getValue), event)
-+              (Some(date.getYear, date.getMonth.getValue), event)
-             } catch {
--              case _: Throwable => (null, event)
-+              case _: Throwable => (None, event)
-             }
+@@ -38,9 +36,9 @@ class K01_LocalDate extends PipelineKoan {
+           // Hint: avoid null by emitting something else in case of exception
+           try {
+             val date = LocalDate.from(formatter.parse(dateStr))
+-            ((date.getYear, date.getMonth.getValue), event)
++            (Some(date.getYear, date.getMonth.getValue), event)
+           } catch {
+-            case _: Throwable => (null, event)
++            case _: Throwable => (None, event)
+           }
          }
          .groupByKey
 diff --git a/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala b/src/test/scala/scio/koans/a2_coders/K02_LatLon1.scala
@@ -740,7 +740,7 @@ index 8230b92..5aa1bc6 100644
            Some(b.result())
          }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
-index f772764..cbd6247 100644
+index 7b5435a..852a61c 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K07_SumByKey1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -752,7 +752,7 @@ index f772764..cbd6247 100644
    type InT = SCollection[(String, Int)]
    type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
  
-@@ -50,8 +48,9 @@ class K07_SumByKey1 extends TransformKoan {
+@@ -49,8 +47,9 @@ class K07_SumByKey1 extends TransformKoan {
  
      // FIXME: implement these with `sumByKey`
      // Hint: Algebird also provides implicit `Semigroup[Max[Int]]` and `Semigroup[Set[Int]]`
@@ -818,7 +818,7 @@ index 8f3fee3..421990b 100644
      testCombineAll(Seq(Set(1), Set(2), Set(3)), Set(1, 2, 3))
    }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
-index aecdb76..6821c48 100644
+index 4d39176..0294bd3 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K10_FoldByKey1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -830,7 +830,7 @@ index aecdb76..6821c48 100644
    type InT = SCollection[(String, Int)]
    type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
  
-@@ -50,8 +48,9 @@ class K10_FoldByKey1 extends TransformKoan {
+@@ -49,8 +47,9 @@ class K10_FoldByKey1 extends TransformKoan {
  
      // FIXME: implement these with `foldByKey`
      // Hint: Algebird also provides implicit `Monoid[Max[Int]]` and `Monoid[Set[Int]]`
@@ -867,7 +867,7 @@ index bcf4a32..1fddcad 100644
  }
  
 diff --git a/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala b/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
-index e2e3bf5..722add7 100644
+index ad5f52d..de4d5b5 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K12_CombineAggregate.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -879,7 +879,7 @@ index e2e3bf5..722add7 100644
    type InT = SCollection[(String, Int)]
    type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
  
-@@ -46,11 +44,11 @@ class K12_CombineAggregate extends TransformKoan {
+@@ -45,11 +43,11 @@ class K12_CombineAggregate extends TransformKoan {
  
    test("combineByKey") { input =>
      val min = input.combineByKey(identity)(math.min)(math.min)
@@ -895,7 +895,7 @@ index e2e3bf5..722add7 100644
      val distinctCount = input
        .combineByKey(createCombiner)(mergeValue)(mergeCombiners)
        .mapValues(_.size)
-@@ -60,10 +58,10 @@ class K12_CombineAggregate extends TransformKoan {
+@@ -59,10 +57,10 @@ class K12_CombineAggregate extends TransformKoan {
  
    test("aggregateByKey") { input =>
      val min = input.aggregateByKey(Int.MaxValue)(math.min, math.min)
@@ -910,7 +910,7 @@ index e2e3bf5..722add7 100644
        .aggregateByKey(Set.empty[Int])(seqOp, combOp)
        .mapValues(_.size)
 diff --git a/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala b/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
-index 57c9e16..217e7a6 100644
+index 1896c4a..63218ef 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K13_MutableFoldCombineAggregate.scala
 @@ -36,20 +36,20 @@ class K13_MutableFoldCombineAggregate extends TransformKoan {
@@ -919,7 +919,7 @@ index 57c9e16..217e7a6 100644
      // Hint: mutate LHS instead of creating a new collection
 -    def op(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = ???
 +    def op(x: mutable.Set[Int], y: mutable.Set[Int]): mutable.Set[Int] = x ++= y
-     input.mapValues(mutable.Set(_)).foldByKey(mutable.Set.empty)(op).mapValues(_.size)
+     input.mapValues(mutable.Set(_)).foldByKey(mutable.Set.empty[Int])(op).mapValues(_.size)
    }
  
    test("combineByKey") { input =>
@@ -969,7 +969,7 @@ index c6597c6..b95c04c 100644
    }
  }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
-index d44d3a6..22aff18 100644
+index 785e6b6..bcc7283 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K15_AggregateByKey1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -981,7 +981,7 @@ index d44d3a6..22aff18 100644
    type InT = SCollection[(String, Int)]
    type OutT = (SCollection[(String, Int)], SCollection[(String, Int)], SCollection[(String, Int)])
  
-@@ -50,10 +48,10 @@ class K15_AggregateByKey1 extends TransformKoan {
+@@ -49,10 +47,10 @@ class K15_AggregateByKey1 extends TransformKoan {
  
      // FIXME: implement these with `aggregateByKey`
      // Hint: Algebird also provides `MaxAggregator`.
@@ -995,7 +995,7 @@ index d44d3a6..22aff18 100644
      (min, max, distinctCount)
    }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala b/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
-index 9c50b04..5c47042 100644
+index 0ed2f6a..9ea8813 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K16_AggregateByKey2.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -1020,16 +1020,16 @@ index 9c50b04..5c47042 100644
  
    test("v1") { input =>
      // Joining aggregators
-@@ -59,7 +57,7 @@ class K16_AggregateByKey2 extends TransformKoan {
-         .andThenPresent {
-           case ((((count, sum), min), max), distinctCount) =>
-             // FIXME: present results as `Stats`
--            ???
-+            Stats(count, sum, min, max, distinctCount)
+@@ -58,7 +56,7 @@ class K16_AggregateByKey2 extends TransformKoan {
+         .join(distinctCountA)
+         .andThenPresent { case ((((count, sum), min), max), distinctCount) =>
+           // FIXME: present results as `Stats`
+-          ???
++          Stats(count, sum, min, max, distinctCount)
          }
      input.aggregateByKey(multiAggregator)
    }
-@@ -70,7 +68,7 @@ class K16_AggregateByKey2 extends TransformKoan {
+@@ -69,7 +67,7 @@ class K16_AggregateByKey2 extends TransformKoan {
        MultiAggregator(countA, sumA, minA, maxA, distinctCountA)
          .andThenPresent { c =>
            // FIXME: present `c` as `Stats`
@@ -1039,7 +1039,7 @@ index 9c50b04..5c47042 100644
      input.aggregateByKey(multiAggregator)
    }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala b/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
-index 30f9638..000141a 100644
+index e38b9e3..b91e293 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K17_Moments1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -1051,7 +1051,7 @@ index 30f9638..000141a 100644
    import K17_Moments1._
  
    type InT = SCollection[Int]
-@@ -60,15 +58,15 @@ class K17_Moments1 extends TransformKoan {
+@@ -57,15 +55,15 @@ class K17_Moments1 extends TransformKoan {
    test("v1") {
      // `Moments` can compute mean, count, variance, standard deviation, etc. in parallel.
      _.map(x => Moments(x)).sum // Algebird provides implicit `Semigroup[Moments]`
@@ -1071,7 +1071,7 @@ index 30f9638..000141a 100644
    }
  }
 diff --git a/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala b/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
-index dedee0a..48f41cd 100644
+index 2733312..9bed107 100644
 --- a/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
 +++ b/src/test/scala/scio/koans/b1_reduce/K18_Moments2.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -1083,16 +1083,16 @@ index dedee0a..48f41cd 100644
    import K18_Moments2._
  
    type InT = SCollection[Int]
-@@ -69,7 +67,7 @@ class K18_Moments2 extends TransformKoan {
+@@ -66,7 +64,7 @@ class K18_Moments2 extends TransformKoan {
+   test("v1") {
      _.map(x => (Min(x), Max(x), x, Moments(x))).sum
-       .map {
-         case (min, max, sum, m) =>
--          ?:[Stats]
-+          Stats(min.get, max.get, sum, m.count, m.mean, m.variance, m.stddev)
+       .map { case (min, max, sum, m) =>
+-        ?:[Stats]
++        Stats(min.get, max.get, sum, m.count, m.mean, m.variance, m.stddev)
        }
    }
  
-@@ -77,10 +75,16 @@ class K18_Moments2 extends TransformKoan {
+@@ -74,10 +72,15 @@ class K18_Moments2 extends TransformKoan {
      val min = Aggregator.min[Int]
      val max = Aggregator.max[Int]
      val sum = Aggregator.fromMonoid[Int]
@@ -1104,9 +1104,8 @@ index dedee0a..48f41cd 100644
 -    val multiAggregator: Aggregator[Int, _, Stats] = ???
 +    val multiAggregator: Aggregator[Int, _, Stats] =
 +      MultiAggregator(min, max, sum, moments)
-+        .andThenPresent {
-+          case (min, max, sum, m) =>
-+            Stats(min, max, sum, m.count, m.mean, m.variance, m.stddev)
++        .andThenPresent { case (min, max, sum, m) =>
++          Stats(min, max, sum, m.count, m.mean, m.variance, m.stddev)
 +        }
  
      input.aggregate(multiAggregator)
@@ -1253,7 +1252,7 @@ index c245126..58b3b9c 100644
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala b/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
-index f924a6d..3246066 100644
+index e1ce06a..6403c80 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K00_CoGroup.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1265,20 +1264,20 @@ index f924a6d..3246066 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, String)])
    type OutT = (SCollection[(String, (Int, String))])
  
-@@ -62,7 +60,10 @@ class K00_CoGroup extends TransformKoan {
-         case (lv, rv) =>
-           // Implement Cartesian product of LHS * RHS values
-           /** Hint: remember [[scio.koans.a1_collections.K09_ForYield]]? */
--          ???
-+          for {
-+            r <- rv
-+            l <- lv
-+          } yield (l, r)
-       }
+@@ -59,7 +57,10 @@ class K00_CoGroup extends TransformKoan {
+     lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+       // Implement Cartesian product of LHS * RHS values
+       /** Hint: remember [[scio.koans.a1_collections.K09_ForYield]]? */
+-      ???
++      for {
++        r <- rv
++        l <- lv
++      } yield (l, r)
+     }
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
-index b470f81..9d70d4f 100644
+index ebca3bf..45a226f 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K01_LeftOuterJoin.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1290,22 +1289,22 @@ index b470f81..9d70d4f 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, String)])
    type OutT = (SCollection[(String, (Int, Option[String]))])
  
-@@ -61,7 +59,12 @@ class K01_LeftOuterJoin extends TransformKoan {
-       lhs.cogroup(rhs).flatMapValues {
-         case (lv, rv) =>
-           // Hint: produce a single `None` if `rv` is empty
--          ???
-+          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
-+            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
-+          for {
-+            r <- asOpts(rv)
-+            l <- lv
-+          } yield (l, r)
-       }
+@@ -58,7 +56,12 @@ class K01_LeftOuterJoin extends TransformKoan {
+   test("v1") { case (lhs, rhs) =>
+     lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+       // Hint: produce a single `None` if `rv` is empty
+-      ???
++      def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
++        if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
++      for {
++        r <- asOpts(rv)
++        l <- lv
++      } yield (l, r)
+     }
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
-index e1b075f..c67c729 100644
+index 8794be2..ba79ece 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K02_RightOuterJoin.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1317,22 +1316,22 @@ index e1b075f..c67c729 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, String)])
    type OutT = (SCollection[(String, (Option[Int], String))])
  
-@@ -62,7 +60,12 @@ class K02_RightOuterJoin extends TransformKoan {
-       lhs.cogroup(rhs).flatMapValues {
-         case (lv, rv) =>
-           // Hint: produce a single `None` if `lv` is empty
--          ???
-+          def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
-+            if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
-+          for {
-+            r <- rv
-+            l <- asOpts(lv)
-+          } yield (l, r)
-       }
+@@ -59,7 +57,12 @@ class K02_RightOuterJoin extends TransformKoan {
+   test("v1") { case (lhs, rhs) =>
+     lhs.cogroup(rhs).flatMapValues { case (lv, rv) =>
+       // Hint: produce a single `None` if `lv` is empty
+-      ???
++      def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
++        if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
++      for {
++        r <- rv
++        l <- asOpts(lv)
++      } yield (l, r)
+     }
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala b/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
-index 0683f53..a031f17 100644
+index cc15bee..9e9d144 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K03_FullOuterJoin.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1344,20 +1343,20 @@ index 0683f53..a031f17 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, String)])
    type OutT = (SCollection[(String, (Option[Int], Option[String]))])
  
-@@ -67,7 +65,10 @@ class K03_FullOuterJoin extends TransformKoan {
-           // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
-           def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
-             if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
--          ???
-+          for {
-+            r <- asOpts(rv)
-+            l <- asOpts(lv)
-+          } yield (l, r)
-       }
+@@ -64,7 +62,10 @@ class K03_FullOuterJoin extends TransformKoan {
+       // Hint: Use this helper method, which returns `Iterator` to avoid eager copies
+       def asOpts[T](xs: Iterable[T]): Iterator[Option[T]] =
+         if (xs.isEmpty) Iterator(None) else xs.iterator.map(Some(_))
+-      ???
++      for {
++        r <- asOpts(rv)
++        l <- asOpts(lv)
++      } yield (l, r)
+     }
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala b/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
-index e8f2bb6..ab231c1 100644
+index f734db6..4671378 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K04_GroupByKey.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1369,17 +1368,17 @@ index e8f2bb6..ab231c1 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, Int)])
    type OutT = (SCollection[(String, Set[Int])])
  
-@@ -68,7 +66,7 @@ class K04_GroupByKey extends TransformKoan {
-       lhs.cogroup(rhs).mapValues {
-         case (lv, rv) =>
-           // Hint: map 2 `Iterable[Int]`s to `Set[Int]`
--          ???
-+          lv.toSet -- rv.toSet
-       }
+@@ -63,7 +61,7 @@ class K04_GroupByKey extends TransformKoan {
+     // Only 1 shuffle from `.cogroup`
+     lhs.cogroup(rhs).mapValues { case (lv, rv) =>
+       // Hint: map 2 `Iterable[Int]`s to `Set[Int]`
+-      ???
++      lv.toSet -- rv.toSet
+     }
    }
  }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala b/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
-index fb127dd..dc35fca 100644
+index 34f07e1..c47da98 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K05_SideInput1.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1391,35 +1390,34 @@ index fb127dd..dc35fca 100644
    type InT = (SCollection[(String, Int)], SCollection[(String, Int)])
    type OutT = (SCollection[(String, Int)])
  
-@@ -69,7 +67,7 @@ class K05_SideInput1 extends TransformKoan {
-         .filter {
-           case ((k, v), ctx) =>
-             // Side input already prepared, no redundant conversion
--            val sideMap: Map[String, Set[Int]] = ???
-+            val sideMap: Map[String, Set[Int]] = ctx(side)
-             !sideMap.getOrElse(k, Set.empty).contains(v)
-         }
-         .toSCollection
-@@ -79,14 +77,14 @@ class K05_SideInput1 extends TransformKoan {
-     case (lhs, rhs) =>
-       // Prepare data into the desired form before making side input
-       // Hint: `.asMapSingletonSideInput` produces `SideInput[Map[K, V]]`, we want `Set[T]`
--      val side: SideInput[Set[(String, Int)]] = ???
-+      val side: SideInput[Set[(String, Int)]] = rhs.asSetSingletonSideInput
-       lhs
-         .withSideInputs(side)
-         .filter {
-           case ((k, v), ctx) =>
-             // Side input already prepared, no redundant conversion
--            val sideSet: Set[(String, Int)] = ???
--            ???
-+            val sideSet: Set[(String, Int)] = ctx(side)
-+            !sideSet.contains((k, v))
-         }
-         .toSCollection
+@@ -65,7 +63,7 @@ class K05_SideInput1 extends TransformKoan {
+       .withSideInputs(side)
+       .filter { case ((k, v), ctx) =>
+         // Side input already prepared, no redundant conversion
+-        val sideMap: Map[String, Set[Int]] = ???
++        val sideMap: Map[String, Set[Int]] = ctx(side)
+         !sideMap.getOrElse(k, Set.empty).contains(v)
+       }
+       .toSCollection
+@@ -74,13 +72,13 @@ class K05_SideInput1 extends TransformKoan {
+   test("v2") { case (lhs, rhs) =>
+     // Prepare data into the desired form before making side input
+     // Hint: `.asMapSingletonSideInput` produces `SideInput[Map[K, V]]`, we want `Set[T]`
+-    val side: SideInput[Set[(String, Int)]] = ???
++    val side: SideInput[Set[(String, Int)]] = rhs.asSetSingletonSideInput
+     lhs
+       .withSideInputs(side)
+       .filter { case ((k, v), ctx) =>
+         // Side input already prepared, no redundant conversion
+-        val sideSet: Set[(String, Int)] = ???
+-        ???
++        val sideSet: Set[(String, Int)] = ctx(side)
++        !sideSet.contains((k, v))
+       }
+       .toSCollection
    }
 diff --git a/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala b/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
-index fbc1eac..c4d7176 100644
+index 33504bc..86e39ea 100644
 --- a/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
 +++ b/src/test/scala/scio/koans/b2_cogbk/K06_SideInput2.scala
 @@ -7,8 +7,6 @@ import scio.koans.shared._
@@ -1431,42 +1429,39 @@ index fbc1eac..c4d7176 100644
    type InT = (SCollection[(String, Int)], SCollection[(Int, String)], SCollection[(String, String)])
    type OutT = (SCollection[(String, String)])
  
-@@ -78,14 +76,16 @@ class K06_SideInput2 extends TransformKoan {
-   test("v1") {
-     case (lhs, i2e, e2s) =>
-       // 2 `SideInput`s, integer to English and English to Spanish
--      val sideInt2En: SideInput[Map[Int, String]] = ???
--      val sideEn2Es: SideInput[Map[String, String]] = ???
-+      val sideInt2En: SideInput[Map[Int, String]] = i2e.asMapSingletonSideInput
-+      val sideEn2Es: SideInput[Map[String, String]] = e2s.asMapSingletonSideInput
-       lhs
-         .withSideInputs(sideInt2En, sideEn2Es)
-         .map {
-           case ((k, v), ctx) =>
-             // Map values to Spanish
--            ?:[(String, String)]
-+            val en = ctx(sideInt2En)(v)
-+            val es = ctx(sideEn2Es)(en)
-+            (k, es)
-         }
-         .toSCollection
+@@ -75,25 +73,28 @@ class K06_SideInput2 extends TransformKoan {
+ 
+   test("v1") { case (lhs, i2e, e2s) =>
+     // 2 `SideInput`s, integer to English and English to Spanish
+-    val sideInt2En: SideInput[Map[Int, String]] = ???
+-    val sideEn2Es: SideInput[Map[String, String]] = ???
++    val sideInt2En: SideInput[Map[Int, String]] = i2e.asMapSingletonSideInput
++    val sideEn2Es: SideInput[Map[String, String]] = e2s.asMapSingletonSideInput
+     lhs
+       .withSideInputs(sideInt2En, sideEn2Es)
+       .map { case ((k, v), ctx) =>
+         // Map values to Spanish
+-        ?:[(String, String)]
++        val en = ctx(sideInt2En)(v)
++        val es = ctx(sideEn2Es)(en)
++        (k, es)
+       }
+       .toSCollection
    }
-@@ -93,13 +93,14 @@ class K06_SideInput2 extends TransformKoan {
-   test("v2") {
-     case (lhs, i2e, e2s) =>
-       // Build a single `SideInput` of integer to Spanish to reduce map lookup cost later
--      val sideInt2Es: SideInput[Map[Int, String]] = ???
-+      val sideInt2Es: SideInput[Map[Int, String]] =
-+        i2e.swap.join(e2s).values.asMapSingletonSideInput
-       lhs
-         .withSideInputs(sideInt2Es)
-         .map {
-           case ((k, v), ctx) =>
-             // Map values to Spanish
--            ?:[(String, String)]
-+            (k, ctx(sideInt2Es)(v))
-         }
-         .toSCollection
+ 
+   test("v2") { case (lhs, i2e, e2s) =>
+     // Build a single `SideInput` of integer to Spanish to reduce map lookup cost later
+-    val sideInt2Es: SideInput[Map[Int, String]] = ???
++    val sideInt2Es: SideInput[Map[Int, String]] =
++      i2e.swap.join(e2s).values.asMapSingletonSideInput
+     lhs
+       .withSideInputs(sideInt2Es)
+       .map { case ((k, v), ctx) =>
+         // Map values to Spanish
+-        ?:[(String, String)]
++        (k, ctx(sideInt2Es)(v))
+       }
+       .toSCollection
    }
 diff --git a/src/test/scala/scio/koans/b3_dofn/K00_Map.scala b/src/test/scala/scio/koans/b3_dofn/K00_Map.scala
 index a628747..fcf88cf 100644
@@ -1778,7 +1773,7 @@ index 16b0cfa..d7d9068 100644
    }
  }
 diff --git a/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala b/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
-index 4563f8d..f63fd99 100644
+index da99849..4ebe5d4 100644
 --- a/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
 +++ b/src/test/scala/scio/koans/b4_approx/K01_BloomFilter2.scala
 @@ -9,8 +9,6 @@ import scio.koans.shared._
@@ -1790,14 +1785,14 @@ index 4563f8d..f63fd99 100644
    type InT = (SCollection[String], SCollection[String])
    type OutT = SCollection[String]
  
-@@ -44,7 +42,7 @@ class K01_BloomFilter2 extends TransformKoan {
-         .cross(bf)
-         .filter {
-           // Filter out items in RHS, i.e. `excludes`
--          ???
-+          case (s, bf) => !bf.mightContain(s)
-         }
-         .keys
+@@ -42,7 +40,7 @@ class K01_BloomFilter2 extends TransformKoan {
+       .cross(bf)
+       .filter {
+         // Filter out items in RHS, i.e. `excludes`
+-        ???
++        case (s, bf) => !bf.mightContain(s)
+       }
+       .keys
    }
 diff --git a/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala b/src/test/scala/scio/koans/b4_approx/K02_HyperLogLog.scala
 index eb8a507..f4e427b 100644
@@ -1848,7 +1843,7 @@ index 7ef3cd2..bbf5cde 100644
        }
    }
 diff --git a/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala b/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
-index a02517c..def313a 100644
+index 05f3fff..d3b3f26 100644
 --- a/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
 +++ b/src/test/scala/scio/koans/b4_approx/K04_ApproxPercentile.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -1860,7 +1855,7 @@ index a02517c..def313a 100644
    import K04_ApproxPercentile._
  
    type InT = SCollection[Int]
-@@ -45,8 +43,14 @@ class K04_ApproxPercentile extends TransformKoan {
+@@ -44,8 +42,14 @@ class K04_ApproxPercentile extends TransformKoan {
        Aggregator
          .approximatePercentileBounds[Int](0.25)
          .andThenPresent(b => Bound(b.lower.lower, b.upper.upper))
