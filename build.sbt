@@ -112,9 +112,11 @@ def showAllKoans(koans: Seq[(String, Boolean)]): Unit = {
   val completed = koans.count(_._2)
   val total = koans.size
   logger.info(Def.withColor(s"Available Koans: $completed of $total completed", Cyan))
+  val width = math.ceil(koans.map(_._1.length).max / 8.0).toInt * 8
+  val fmt = s"%-${width}s: %s"
   koans.foreach { kv =>
     val (color, status) = if (kv._2) (Green, "completed") else (Red, "pending")
-    val msg = s"- %-40s\t: %s".format(kv._1, status)
+    val msg = fmt.format(kv._1, status)
     logger.info(Def.withColor(msg, color))
   }
 }
