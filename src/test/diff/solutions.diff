@@ -1599,7 +1599,7 @@ index 0f8b13d..7b67588 100644
  
      // How many unique threads were used to run our `DoFn`?
 -    MyDoFn.sharedMap.size() shouldBe ?:[Int]
-+    MyDoFn.sharedMap.size() shouldBe 8
++    MyDoFn.sharedMap.size() shouldBe 4
  
      // What's the sum of all values in our map?
 -    MyDoFn.sharedMap.asScala.values.sum shouldBe ?:[Int]
@@ -1652,20 +1652,20 @@ index dd06441..287e0f0 100644
  
      // How many times were `setup/startBundle/finishBundle/tearDown` called?
 -    MyDoFn.setups.get() shouldBe ?:[Int]
-+    MyDoFn.setups.get() shouldBe 8
++    MyDoFn.setups.get() shouldBe 4
  
      // Number of bundles is non-deterministic, but there should be a minimal at least?
 -    MyDoFn.startBundles.get() should be >= ?:[Int]
 -    MyDoFn.finishBundles.get() should be >= ?:[Int]
-+    MyDoFn.startBundles.get() should be >= 8
-+    MyDoFn.finishBundles.get() should be >= 8
++    MyDoFn.startBundles.get() should be >= 4
++    MyDoFn.finishBundles.get() should be >= 4
  
      // Number of `startBundle` calls should equal to the number of what other method calls?
 -    MyDoFn.startBundles.get() shouldBe ?:[Int]
 +    MyDoFn.startBundles.get() shouldBe MyDoFn.finishBundles.get()
  
      // `DirectRunner` may not call `tearDown` at all
-     // MyDoFn.tearDowns.get() shouldBe 8
+     // MyDoFn.tearDowns.get() shouldBe 4
 diff --git a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
 index 71997ff..2d96989 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala

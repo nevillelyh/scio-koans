@@ -42,7 +42,7 @@ class K09_AsyncLookupDoFn extends PipelineKoan {
   "Snippet" should "work" in {
     val doFn = new MyDoFn
 
-    runWithParallelism(8) { sc =>
+    runWithParallelism(4) { sc =>
       val p = sc
         .parallelize(input)
         .applyTransform(ParDo.of(doFn))
@@ -77,7 +77,7 @@ object K09_AsyncLookupDoFn {
 
   class Client {
     implicit val es: ExecutionContextExecutorService =
-      ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(8))
+      ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(4))
 
     // Process a request asynchronously
     def request(input: Int): Future[String] = Future {

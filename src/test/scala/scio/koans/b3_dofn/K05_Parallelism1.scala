@@ -20,7 +20,7 @@ class K05_Parallelism1 extends PipelineKoan {
   val expected: Seq[Int] = 101 to 200
 
   "Snippet" should "work" in {
-    runWithParallelism(8) { sc =>
+    runWithParallelism(4) { sc =>
       val p = sc.parallelize(input).applyTransform(ParDo.of(new MyDoFn))
       p should containInAnyOrder(expected)
     }
