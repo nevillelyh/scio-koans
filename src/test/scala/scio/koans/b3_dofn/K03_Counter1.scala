@@ -18,8 +18,8 @@ class K03_Counter1 extends PipelineKoan {
   "Snippet" should "work" in {
     val doFn = new MyDoFn
 
-    // Set `--targetParallelism=8`
-    runWithParallelism(8) { sc =>
+    // Set `--targetParallelism=4`
+    runWithParallelism(4) { sc =>
       // Is the same `doFn` instance being executed in all worker threads?
       val p = sc.parallelize(input).applyTransform(ParDo.of(doFn))
       p should containInAnyOrder(expected)

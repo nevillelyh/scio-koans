@@ -22,7 +22,7 @@ class K07_LifeCycle extends PipelineKoan {
   "Snippet" should "work" in {
     val doFn = new MyDoFn
 
-    runWithParallelism(8) { sc =>
+    runWithParallelism(4) { sc =>
       val p = sc.parallelize(input).applyTransform(ParDo.of(doFn))
       p should containInAnyOrder(expected)
     }
@@ -38,7 +38,7 @@ class K07_LifeCycle extends PipelineKoan {
     MyDoFn.startBundles.get() shouldBe ?:[Int]
 
     // `DirectRunner` may not call `tearDown` at all
-    // MyDoFn.tearDowns.get() shouldBe 8
+    // MyDoFn.tearDowns.get() shouldBe 4
   }
 }
 
