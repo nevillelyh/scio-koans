@@ -23,13 +23,15 @@ class K10_Arrays extends JmhKoan {
   }
 
   /**
+   * FIXME: convert the 2 `Seq[Double]` vectors to arrays
+   *
    * - `Seq[Double]` requires boxed `java.lang.Double` due to generics
    * - `Array[Double]` is equivalent to Java primitive array `double[]`
    *
    * - http://www.lyh.me/slides/primitives.html
    */
-  val array1: Array[Double] = ???
-  val array2: Array[Double] = ???
+  val array1: Array[Double] = null
+  val array2: Array[Double] = null
 
   @Benchmark def v1: Double = {
     var dp = 0.0
