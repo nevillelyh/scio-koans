@@ -250,6 +250,43 @@ index c16ea35..f7881f6 100644
  
    verifyResults()
    verifySpeedup(Speedup.Faster)
+diff --git a/src/test/scala/scio/koans/a1_collections/K10_Arrays.scala b/src/test/scala/scio/koans/a1_collections/K10_Arrays.scala
+index 4450224..9a7dd86 100644
+--- a/src/test/scala/scio/koans/a1_collections/K10_Arrays.scala
++++ b/src/test/scala/scio/koans/a1_collections/K10_Arrays.scala
+@@ -28,8 +28,8 @@ class K10_Arrays extends JmhKoan {
+    *
+    * - http://www.lyh.me/slides/primitives.html
+    */
+-  val array1: Array[Double] = ???
+-  val array2: Array[Double] = ???
++  val array1: Array[Double] = seq1.toArray
++  val array2: Array[Double] = seq2.toArray
+ 
+   @Benchmark def v1: Double = {
+     var dp = 0.0
+diff --git a/src/test/scala/scio/koans/a1_collections/K11_Erasure.scala b/src/test/scala/scio/koans/a1_collections/K11_Erasure.scala
+index 43f100c..a91710c 100644
+--- a/src/test/scala/scio/koans/a1_collections/K11_Erasure.scala
++++ b/src/test/scala/scio/koans/a1_collections/K11_Erasure.scala
+@@ -9,8 +9,6 @@ import scala.collection.JavaConverters._
+  * Convert a Scala `Seq[Int]` to Java `List[Integer]`.
+  */
+ class K11_Erasure extends JmhKoan {
+-  ImNotDone
+-
+   val numbers: Seq[Int] = (1 to 100)
+ 
+   def sum(xs: java.util.List[java.lang.Integer]): java.lang.Integer = {
+@@ -28,7 +26,7 @@ class K11_Erasure extends JmhKoan {
+   // Hint: `scala.Int` and `java.lang.Integer` are the same boxed integer when inside a generic
+   // collection. Therefore `Seq[Int]` and `Seq[java.lang.Integer]` are binary compatible despite
+   // the type mismatch.
+-  @Benchmark def v1: Int = ???
++  @Benchmark def v1: Int = sum(numbers.asInstanceOf[Seq[java.lang.Integer]].asJava)
+ 
+   verifyResults()
+   verifySpeedup(Speedup.Times(3))
 diff --git a/src/test/scala/scio/koans/a2_coders/K00_Avro.scala b/src/test/scala/scio/koans/a2_coders/K00_Avro.scala
 index 11b112c..19ce58a 100644
 --- a/src/test/scala/scio/koans/a2_coders/K00_Avro.scala
@@ -1534,7 +1571,7 @@ index 195827c..04d1567 100644
    }
  }
 diff --git a/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala b/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
-index c56b8c2..696b885 100644
+index ad4e8f8..0686614 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K03_Counter1.scala
 @@ -8,8 +8,6 @@ import scio.koans.shared._
@@ -1556,7 +1593,7 @@ index c56b8c2..696b885 100644
  }
  
 diff --git a/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala b/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
-index 566a126..ec8acfa 100644
+index 49ad379..7ecbd25 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K04_Counter2.scala
 @@ -10,8 +10,6 @@ import scio.koans.shared._
@@ -1582,7 +1619,7 @@ index 566a126..ec8acfa 100644
  }
  
 diff --git a/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala b/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
-index 0f8b13d..7b67588 100644
+index 7e3670e..5149f0b 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K05_Parallelism1.scala
 @@ -12,8 +12,6 @@ import scala.collection.JavaConverters._
@@ -1608,7 +1645,7 @@ index 0f8b13d..7b67588 100644
  }
  
 diff --git a/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala b/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
-index cac7461..159086b 100644
+index 85314b6..2395d84 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K06_Parallelism2.scala
 @@ -11,8 +11,6 @@ import scio.koans.shared._
@@ -1635,7 +1672,7 @@ index cac7461..159086b 100644
  }
  
 diff --git a/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala b/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
-index dd06441..287e0f0 100644
+index 949e6d1..9e23ab1 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K07_LifeCycle.scala
 @@ -12,8 +12,6 @@ import scio.koans.shared._
@@ -1667,7 +1704,7 @@ index dd06441..287e0f0 100644
      // `DirectRunner` may not call `tearDown` at all
      // MyDoFn.tearDowns.get() shouldBe 4
 diff --git a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
-index 71997ff..2d96989 100644
+index ab0d530..ff9fb89 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K08_AsyncDoFn.scala
 @@ -13,8 +13,6 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
@@ -1696,7 +1733,7 @@ index 71997ff..2d96989 100644
  
    class Client {
 diff --git a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
-index 2114da8..07983bd 100644
+index 3aa02b3..2f28b3d 100644
 --- a/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
 +++ b/src/test/scala/scio/koans/b3_dofn/K09_AsyncLookupDoFn.scala
 @@ -15,8 +15,6 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Futu
