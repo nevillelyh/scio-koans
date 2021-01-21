@@ -275,7 +275,7 @@ index 43f100c..a91710c 100644
  class K11_Erasure extends JmhKoan {
 -  ImNotDone
 -
-   val numbers: Seq[Int] = (1 to 100)
+   val numbers: Seq[Int] = 1 to 100
  
    def sum(xs: java.util.List[java.lang.Integer]): java.lang.Integer = {
 @@ -28,7 +26,7 @@ class K11_Erasure extends JmhKoan {

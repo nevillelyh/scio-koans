@@ -11,7 +11,7 @@ import scala.collection.JavaConverters._
 class K11_Erasure extends JmhKoan {
   ImNotDone
 
-  val numbers: Seq[Int] = (1 to 100)
+  val numbers: Seq[Int] = 1 to 100
 
   def sum(xs: java.util.List[java.lang.Integer]): java.lang.Integer = {
     var r = 0
