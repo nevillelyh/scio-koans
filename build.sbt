@@ -1,9 +1,9 @@
 name := "scio-koans"
 description := "Scio Koans"
 
-val scioVersion = "0.10.0"
+val scioVersion = "0.10.2"
 val magnolifyVersion = "0.4.3"
-val scalaTestVersion = "3.2.6"
+val scalaTestVersion = "3.2.9"
 
 val allKoans = taskKey[Seq[(String, Boolean)]]("Show all Koans")
 val nextKoan = taskKey[Unit]("Run next Koan")
