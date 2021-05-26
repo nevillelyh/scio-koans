@@ -1,5 +1,6 @@
 package scio.koans.b1_reduce
 
+import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 import com.twitter.algebird._
 import scio.koans.shared._
@@ -84,6 +85,8 @@ class K18_Moments2 extends TransformKoan {
 }
 
 object K18_Moments2 {
+  implicit val momentsCoder: Coder[Moments] = Coder.kryo[Moments]
+
   val input: Seq[Int] = 1 to 100
 
   val expected: Stats = {
